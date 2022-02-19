@@ -50,12 +50,12 @@
             </HBox>
             <StackPane>
                <children>
-                  <Pane maxHeight="50.0" minHeight="50.0" prefHeight="50.0" />
-                  <Label fx:id="databaseInvalid" disable="true" text="The selected path is not writable, please choose a new location." textFill="RED">
+                  <Label fx:id="databaseInvalid" text="The selected path is not writable, please choose a new location." textFill="RED" visible="false">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
+                  <Pane maxHeight="50.0" minHeight="50.0" prefHeight="50.0" />
                </children>
             </StackPane>
             <HBox alignment="CENTER" />
@@ -81,7 +81,7 @@
                         <Insets right="6.0" />
                      </padding>
                   </Label>
-                  <TextField fx:id="apiKeyText" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id="rebrickableApiKeyText" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
                      <children>
                         <Label text="You have to login at" />
@@ -93,7 +93,7 @@
             </GridPane>
             <StackPane>
                <children>
-                  <Label fx:id="apiKeyInvalid" disable="true" text="Wrong API Key, please check the entered key." textFill="RED">
+                  <Label fx:id="apiKeyInvalid" text="Wrong API Key, please check the entered key." textFill="RED" visible="false">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
