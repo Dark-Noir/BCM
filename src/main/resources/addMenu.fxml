@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+<ScrollPane fitToHeight="true" fitToWidth="true" minHeight="300.0" minWidth="500.0" prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <content>
+      <VBox spacing="6.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="6.0">
+               <children>
+                  <RadioButton mnemonicParsing="false" selected="true" text="Part">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="partOrSet" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton mnemonicParsing="false" text="Set" toggleGroup="$partOrSet" />
+                  <TextField promptText="Search..." HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <SplitPane dividerPositions="0.2, 0.8">
+               <items>
+                  <VBox spacing="3.0">
+                     <children>
+                        <TextField promptText="Category..." />
+                        <TableView VBox.vgrow="ALWAYS">
+                          <columns>
+                            <TableColumn editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" text="Categories" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </VBox>
+                  <VBox spacing="3.0">
+                     <children>
+                        <TableView VBox.vgrow="ALWAYS">
+                          <columns>
+                            <TableColumn editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" sortable="false" text="Image" />
+                            <TableColumn editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" text="Brand" />
+                              <TableColumn editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" text="Part #" />
+                              <TableColumn editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" text="Description" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </VBox>
+                  <VBox spacing="3.0">
+                     <children>
+                        <TextField promptText="Color..." />
+                        <TableView VBox.vgrow="ALWAYS">
+                          <columns>
+                            <TableColumn editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" text="Colors" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </VBox>
+               </items>
+            </SplitPane>
+         </children>
+         <padding>
+            <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+         </padding>
+      </VBox>
+   </content>
+</ScrollPane>
