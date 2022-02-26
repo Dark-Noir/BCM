@@ -9,6 +9,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -100,10 +101,18 @@ public class WelcomeController {
 
 	}
 
+	@FXML
+	private Label apiKeyInvalid;
+
 	public void checkOK(String databaseSaveLocationTextNew, String rebrickableApiKeyTextNew) {
 		if (databaseSaveLocationTextNew.endsWith(".db") && rebrickableApiKeyTextNew.matches("^[A-Za-z0-9]{32,32}$")) {
+			apiKeyInvalid.setVisible(false);
 			welcomeOKButton.setDisable(false);
+		} else if (!rebrickableApiKeyTextNew.matches("^[A-Za-z0-9]{32,32}$")) {
+			apiKeyInvalid.setVisible(true);
+			welcomeOKButton.setDisable(true);
 		} else {
+			apiKeyInvalid.setVisible(false);
 			welcomeOKButton.setDisable(true);
 		}
 	}

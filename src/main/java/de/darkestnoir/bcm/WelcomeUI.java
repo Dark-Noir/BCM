@@ -16,8 +16,12 @@ public class WelcomeUI extends Application {
 		Image icon = new Image("icons/app.png");
 		WelcomeUIStage.getIcons().add(icon);
 		WelcomeUIStage.setTitle("Brick Collection Manager");
-		WelcomeUIStage.setMinWidth(100);
-		WelcomeUIStage.setMinHeight(100);
+		WelcomeUIStage.setResizable(false);
+		WelcomeUIStage.setMaximized(false);
+		// WelcomeUIStage.setMinWidth(700);
+		// WelcomeUIStage.setMinHeight(450);
+		// WelcomeUIStage.setMaxWidth(700);
+		// WelcomeUIStage.setMaxHeight(450);
 		WelcomeUIStage.setScene(welcomeScene);
 		WelcomeUIStage.show();
 	}
