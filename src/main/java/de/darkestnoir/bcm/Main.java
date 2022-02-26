@@ -2,6 +2,9 @@ package de.darkestnoir.bcm;
 
 import java.io.IOException;
 
+import org.dajlab.rebrickableapi.v3.service.IRebrickableService;
+import org.dajlab.rebrickableapi.v3.service.RebrickableServiceImpl;
+
 public class Main {
 	public static void main(String[] args) {
 		try {
@@ -38,5 +41,8 @@ public class Main {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
+//		WelcomeUI.start();
+
+		IRebrickableService service = new RebrickableServiceImpl("46a80b7668b5acf68df5ac4b7bff9662");
 	}
 }
