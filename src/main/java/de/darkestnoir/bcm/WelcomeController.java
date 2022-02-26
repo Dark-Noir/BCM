@@ -1,6 +1,8 @@
 package de.darkestnoir.bcm;
 
+import java.awt.Desktop;
 import java.io.File;
+import java.net.URL;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -22,7 +24,10 @@ public class WelcomeController {
 
 	@FXML
 	public void rebrickableLinkClick() {
-
+		try {
+			Desktop.getDesktop().browse(new URL("https://rebrickable.com/login/").toURI());
+		} catch (Exception e) {
+		}
 	}
 
 	@FXML
