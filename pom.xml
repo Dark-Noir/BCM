@@ -108,6 +108,12 @@
 			<version>17.0.1</version>
 			<classifier>win</classifier>
 		</dependency>
+
+		<dependency>
+			<groupId>org.dajlab</groupId>
+			<artifactId>rebrickableapi</artifactId>
+			<version>0.0.7-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 </project>
