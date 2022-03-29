@@ -2,8 +2,12 @@ package de.darkestnoir.bcm;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -32,11 +36,43 @@ public class WelcomeController {
 	}
 
 	@FXML
+	private Label databaseInvalid;
+
+	@FXML
 	public void welcomeOKClick(ActionEvent event) {
 		String rebrickableApiKey = rebrickableApiKeyText.getText();
 		String databaseSaveLocation = databaseSaveLocationText.getText();
 		System.out.println(rebrickableApiKey); // temporary
 		System.out.println(databaseSaveLocation); // temporary
+
+		String databaseFilePath = databaseSaveLocation.substring(0, databaseSaveLocation.lastIndexOf("\\"));
+		Settings settings = new Settings();
+		settings.setDatabasePath(databaseSaveLocation);
+		settings.setApiKey(rebrickableApiKey);
+
+		Database database = new Database();
+
+		try {
+			Files.createDirectories(Paths.get(databaseFilePath));
+			try {
+				FileUtils.saveSettingsToFile(settings, "BCM.settings");
+				FileUtils.saveDatabaseToFile(database, databaseSaveLocation);
+
+				Platform.runLater(new Runnable() {
+
+					@Override
+					public void run() {
+						WelcomeUI.switchToMainUI();
+					}
+				});
+
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} // Todo API key check
+				// Todo Check if database with same name exists
+		} catch (IOException e1) {
+			databaseInvalid.setVisible(true);
+		}
 	}
 
 	@FXML

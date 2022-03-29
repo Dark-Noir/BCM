@@ -12,7 +12,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public class Controller {
+public class MainController {
 
 	@FXML
 	private AnchorPane scenePane;
