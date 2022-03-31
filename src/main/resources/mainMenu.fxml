@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="scenePane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.darkestnoir.bcm.MainController">
+<AnchorPane fx:id="scenePane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.darkestnoir.bcm.UIController">
    <children>
       <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <content>
@@ -60,7 +60,7 @@
                   </MenuBar>
                   <ToolBar minWidth="300.0">
                     <items>
-                      <Button fx:id="addButton" mnemonicParsing="false" text="Add..." />
+                      <Button fx:id="mainAddButton" mnemonicParsing="false" onAction="#mainAddClick" text="Add..." />
                         <Button mnemonicParsing="false" text="Button" />
                         <Button mnemonicParsing="false" text="Button" />
                     </items>

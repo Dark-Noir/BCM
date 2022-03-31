@@ -11,8 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
-<ScrollPane fitToHeight="true" fitToWidth="true" minHeight="300.0" minWidth="500.0" prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<ScrollPane fitToHeight="true" fitToWidth="true" minHeight="300.0" minWidth="500.0" prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.darkestnoir.bcm.AddUIController">
    <content>
       <VBox spacing="6.0">
          <children>
@@ -53,10 +52,10 @@
                   </VBox>
                   <VBox spacing="3.0">
                      <children>
-                        <TextField promptText="Color..." />
-                        <TableView VBox.vgrow="ALWAYS">
+                        <TextField fx:id="addColorSearchField" onAction="#addColorSearch" promptText="Color..." />
+                        <TableView fx:id="addColorTable" onSort="#addColorSort" VBox.vgrow="ALWAYS">
                           <columns>
-                            <TableColumn editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" text="Colors" />
+                            <TableColumn fx:id="addColorTableColumn" editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" text="Colors" />
                           </columns>
                         </TableView>
                      </children>

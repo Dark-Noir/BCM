@@ -9,38 +9,40 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-public class WelcomeUI extends Application {
+public class UI extends Application {
 
 	private static Stage UIStage;
 	private static boolean settingsLoaded = false;
+	public static Database database;
+	public static Settings settings;
 
 	@Override
-	public void start(Stage WelcomeUIStage) throws Exception {
-		UIStage = WelcomeUIStage;
+	public void start(Stage MainUIStage) throws Exception {
+		UIStage = MainUIStage;
 
 		Parent root;
 
 		if (!settingsLoaded) {
 			root = FXMLLoader.load(getClass().getClassLoader().getResource("welcomeUI.fxml"));
-			WelcomeUIStage.setResizable(false);
-			WelcomeUIStage.setMaximized(false);
+			MainUIStage.setResizable(false);
+			MainUIStage.setMaximized(false);
 		} else {
 			root = FXMLLoader.load(getClass().getClassLoader().getResource("mainMenu.fxml"));
-			WelcomeUIStage.setResizable(true);
+			MainUIStage.setResizable(true);
 		}
 
-		Scene welcomeScene = new Scene(root);
-		welcomeScene.getStylesheets().add(getClass().getClassLoader().getResource("application.css").toExternalForm());
+		Scene Scene = new Scene(root);
+		Scene.getStylesheets().add(getClass().getClassLoader().getResource("application.css").toExternalForm());
 		Image icon = new Image("icons/app.png");
-		WelcomeUIStage.getIcons().add(icon);
-		WelcomeUIStage.setTitle("Brick Collection Manager");
+		MainUIStage.getIcons().add(icon);
+		MainUIStage.setTitle("Brick Collection Manager");
 
 		// WelcomeUIStage.setMinWidth(700);
 		// WelcomeUIStage.setMinHeight(450);
 		// WelcomeUIStage.setMaxWidth(700);
 		// WelcomeUIStage.setMaxHeight(450);
-		WelcomeUIStage.setScene(welcomeScene);
-		WelcomeUIStage.show();
+		MainUIStage.setScene(Scene);
+		MainUIStage.show();
 	}
 
 	public static void close() {
@@ -52,15 +54,20 @@ public class WelcomeUI extends Application {
 		}
 	}
 
-	public static void start(boolean settingsLoaded) {
-		WelcomeUI.settingsLoaded = settingsLoaded;
+	public static void start(boolean settingsLoaded, Database database, Settings settings) {
+		UI.settingsLoaded = settingsLoaded;
+		UI.database = database;
+		UI.settings = settings;
 		launch();
 	}
 
 	public static void switchToMainUI() {
 		Parent registrationRoot;
 		try {
-			FXMLLoader loader = new FXMLLoader(WelcomeUI.class.getClassLoader().getResource("mainMenu.fxml"));
+			settings = FileUtils.loadSettingsFromFile("BCM.settings");
+			database = FileUtils.loadDatabaseFromFile(settings.getDatabasePath());
+
+			FXMLLoader loader = new FXMLLoader(UI.class.getClassLoader().getResource("mainMenu.fxml"));
 			loader.setControllerFactory((Class<?> type) -> {
 				try {
 					Object controller = type.newInstance();
@@ -77,6 +84,8 @@ public class WelcomeUI extends Application {
 			((Stage) UIStage.getScene().getWindow()).setScene(currentScene);
 			UIStage.setResizable(true);
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
