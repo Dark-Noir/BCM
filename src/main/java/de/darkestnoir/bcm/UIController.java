@@ -8,6 +8,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.dajlab.rebrickableapi.v3.service.IRebrickableService;
 import org.dajlab.rebrickableapi.v3.service.RebrickableServiceImpl;
@@ -28,6 +32,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -159,7 +164,19 @@ public class UIController {
 			if (lastApiSyncTime == null || currentLocalDate.isAfter(lastApiSyncTime.plusDays(1))) {
 				try {
 					Color[] color = service.getColors().getAllColors();
-					UI.database.setLegoColors(color);
+
+					List<Color> colorList = new ArrayList(Arrays.asList(color));
+
+					List<Color> elementsToRemove = new ArrayList<>();
+					for (Color currentColor : colorList) {
+						if (currentColor.getName().equals("[Unknown]")) {
+							elementsToRemove.add(currentColor);
+						}
+					}
+					colorList.removeAll(elementsToRemove);
+					Collections.sort(colorList);
+
+					UI.database.setLegoColors(colorList.toArray(new Color[colorList.size()]));
 
 					System.out.println("Loading colors done");
 				} catch (RebrickableException e) {
@@ -243,7 +260,14 @@ public class UIController {
 			Stage stage = new Stage();
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setScene(scene);
-			stage.showAndWait();
+			Image icon = new Image("icons/app.png");
+			stage.getIcons().add(icon);
+			stage.setTitle("Add...");
+			stage.setMinWidth(600);
+			stage.setMinHeight(500);
+
+			stage.show();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

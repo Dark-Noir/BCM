@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -17,47 +17,35 @@
          <children>
             <HBox alignment="CENTER_LEFT" spacing="6.0">
                <children>
-                  <RadioButton mnemonicParsing="false" selected="true" text="Part">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="partOrSet" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton mnemonicParsing="false" text="Set" toggleGroup="$partOrSet" />
-                  <TextField promptText="Search..." HBox.hgrow="ALWAYS" />
+                  <RadioButton fx:id="addPart" mnemonicParsing="false" onAction="#addPartActive" selected="true" text="Part" />
+                  <RadioButton fx:id="addSet" mnemonicParsing="false" onAction="#addSetActive" text="Set" />
+                  <TextField fx:id="addPartSearch" onAction="#addPartSearchActive" onKeyTyped="#addPartSearchTyped" promptText="Search..." HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
             <SplitPane dividerPositions="0.2, 0.8">
                <items>
                   <VBox spacing="3.0">
                      <children>
-                        <TextField promptText="Category..." />
-                        <TableView VBox.vgrow="ALWAYS">
+                        <TextField fx:id="addCategorySearch" onAction="#addCategorySearchActive" onKeyTyped="#addCategorySearchTyped" promptText="Category..." />
+                        <ListView fx:id="addCategoryList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="3.0">
+                     <children>
+                        <TableView fx:id="addPartTable" VBox.vgrow="ALWAYS">
                           <columns>
-                            <TableColumn editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" text="Categories" />
+                            <TableColumn fx:id="addPartColumnImage" editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" sortable="false" text="Image" />
+                            <TableColumn fx:id="addPartColumnBrand" editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" text="Brand" />
+                              <TableColumn fx:id="addPartColumnNumber" editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" text="Part #" />
+                              <TableColumn fx:id="addPartColumnDesc" editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" text="Description" />
                           </columns>
                         </TableView>
                      </children>
                   </VBox>
                   <VBox spacing="3.0">
                      <children>
-                        <TableView VBox.vgrow="ALWAYS">
-                          <columns>
-                            <TableColumn editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" sortable="false" text="Image" />
-                            <TableColumn editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" text="Brand" />
-                              <TableColumn editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" text="Part #" />
-                              <TableColumn editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" text="Description" />
-                          </columns>
-                        </TableView>
-                     </children>
-                  </VBox>
-                  <VBox spacing="3.0">
-                     <children>
-                        <TextField fx:id="addColorSearchField" onAction="#addColorSearch" promptText="Color..." />
-                        <TableView fx:id="addColorTable" onSort="#addColorSort" VBox.vgrow="ALWAYS">
-                          <columns>
-                            <TableColumn fx:id="addColorTableColumn" editable="false" maxWidth="-1.0" minWidth="70.0" prefWidth="-1.0" text="Colors" />
-                          </columns>
-                        </TableView>
+                        <TextField fx:id="addColorSearch" onAction="#addColorSearchActive" onKeyTyped="#addColorSearchTyped" promptText="Color..." />
+                        <ListView fx:id="addColorList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
                </items>
