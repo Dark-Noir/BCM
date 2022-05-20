@@ -27,19 +27,11 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class WelcomeUIController {
@@ -75,6 +67,10 @@ public class WelcomeUIController {
 	@FXML
 	private AnchorPane sceneAnchorPane;
 
+	/**
+	 * @param databaseSaveLocationText
+	 * @param rebrickableApiKeyText
+	 */
 	public void checkInputValidity(String databaseSaveLocationText, String rebrickableApiKeyText) {
 		boolean okButtonEnabled = false;
 		boolean apiKeyValid = false;
@@ -88,24 +84,7 @@ public class WelcomeUIController {
 		}
 
 		apiKeyInvalidLabel.setVisible(!apiKeyValid);
-		welcomeOKButton.setDisable(okButtonEnabled);
-	}
-
-	@FXML
-	public void databaseSaveLocationClick(ActionEvent event) {
-		FileChooser databaseLocationChooser = new FileChooser();
-		File databaseFolder = new File(databaseSaveFolderDefault1);
-		if (databaseFolder.exists() && databaseFolder.isDirectory()) {
-			databaseLocationChooser.setInitialDirectory(new File(databaseSaveFolderDefault1));
-		} else {
-			databaseLocationChooser.setInitialDirectory(new File(databaseSaveFolderDefault2));
-		}
-		databaseLocationChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Database Files", "*.db"));
-		databaseLocationChooser.setInitialFileName("database.db");
-		File databaseSaveLocation = databaseLocationChooser.showSaveDialog(uiStage);
-		if (databaseSaveLocation != null) {
-			databaseSaveLocationTextField.setText(databaseSaveLocation.getAbsolutePath());
-		}
+		welcomeOKButton.setDisable(!okButtonEnabled);
 	}
 
 	@FXML
@@ -182,49 +161,19 @@ public class WelcomeUIController {
 	}
 
 	@FXML
-	public void mainAddClick(ActionEvent event) {
-		FXMLLoader fxmlLoader = new FXMLLoader(BCMApplication.class.getClassLoader().getResource("addMenu.fxml"));
-		Parent parent;
-		try {
-			parent = fxmlLoader.load();
-
-			AddUIController dialogController = fxmlLoader.<AddUIController>getController();
-			dialogController.setLegoColors(BCMApplication.getDatabase().getLegoColors());
-
-			Scene scene = new Scene(parent, 300, 200);
-			Stage stage = new Stage();
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setScene(scene);
-			Image icon = new Image("icons/app.png");
-			stage.getIcons().add(icon);
-			stage.setTitle("Add...");
-			stage.setMinWidth(600);
-			stage.setMinHeight(500);
-
-			stage.show();
-
-		} catch (IOException e) {
-			e.printStackTrace();
+	public void openDBFileChooser(ActionEvent event) {
+		FileChooser databaseLocationChooser = new FileChooser();
+		File databaseFolder = new File(databaseSaveFolderDefault1);
+		if (databaseFolder.exists() && databaseFolder.isDirectory()) {
+			databaseLocationChooser.setInitialDirectory(new File(databaseSaveFolderDefault1));
+		} else {
+			databaseLocationChooser.setInitialDirectory(new File(databaseSaveFolderDefault2));
 		}
-
-	}
-
-	@FXML
-	public void open(ActionEvent event) {
-		FileChooser chooser = new FileChooser();
-		File f = chooser.showOpenDialog(uiStage);
-	}
-
-	@FXML
-	public void quit(ActionEvent event) {
-
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setHeaderText("You're abour to quit!");
-		alert.setContentText("Do you want to save your changes?");
-
-		if (alert.showAndWait().get() == ButtonType.OK) {
-			uiStage = (Stage) sceneAnchorPane.getScene().getWindow();
-			uiStage.close();
+		databaseLocationChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Database Files", "*.db"));
+		databaseLocationChooser.setInitialFileName("database.db");
+		File databaseSaveLocation = databaseLocationChooser.showSaveDialog(uiStage);
+		if (databaseSaveLocation != null) {
+			databaseSaveLocationTextField.setText(databaseSaveLocation.getAbsolutePath());
 		}
 	}
 
