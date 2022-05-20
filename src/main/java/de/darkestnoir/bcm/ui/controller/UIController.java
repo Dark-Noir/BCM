@@ -1,4 +1,4 @@
-package de.darkestnoir.bcm;
+package de.darkestnoir.bcm.ui.controller;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -18,6 +18,11 @@ import org.dajlab.rebrickableapi.v3.service.RebrickableServiceImpl;
 import org.dajlab.rebrickableapi.v3.vo.Color;
 import org.dajlab.rebrickableapi.v3.vo.RebrickableException;
 
+import de.darkestnoir.bcm.AddUIController;
+import de.darkestnoir.bcm.BCMApplication;
+import de.darkestnoir.bcm.Database;
+import de.darkestnoir.bcm.FileUtils;
+import de.darkestnoir.bcm.Settings;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
