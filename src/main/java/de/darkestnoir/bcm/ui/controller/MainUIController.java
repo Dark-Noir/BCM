@@ -128,7 +128,7 @@ public class MainUIController {
 		} else {
 			IRebrickableService service = new RebrickableServiceImpl("46a80b7668b5acf68df5ac4b7bff9662"); // Test API key
 
-			LocalDateTime lastApiSyncTime = BCMApplication.database.getApiDate();
+			LocalDateTime lastApiSyncTime = BCMApplication.getDatabase().getApiDate();
 			LocalDateTime currentLocalDate = LocalDateTime.now();
 
 			if (lastApiSyncTime == null || currentLocalDate.isAfter(lastApiSyncTime.plusDays(1))) {
@@ -146,7 +146,7 @@ public class MainUIController {
 					colorList.removeAll(elementsToRemove);
 					Collections.sort(colorList);
 
-					BCMApplication.database.setLegoColors(colorList.toArray(new Color[colorList.size()]));
+					BCMApplication.getDatabase().setLegoColors(colorList.toArray(new Color[colorList.size()]));
 
 					System.out.println("Loading colors done");
 				} catch (RebrickableException e) {
@@ -164,13 +164,13 @@ public class MainUIController {
 //				System.out.println("Loading parts failed");
 //			}
 
-				BCMApplication.database.setApiDate(currentLocalDate);
+				BCMApplication.getDatabase().setApiDate(currentLocalDate);
 
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
 				System.out.println(dtf.format(currentLocalDate));
 
 				try {
-					FileUtils.saveDatabaseToFile(BCMApplication.database, BCMApplication.settings.getDatabasePath());
+					FileUtils.saveDatabaseToFile(BCMApplication.getDatabase(), BCMApplication.getSettings().getDatabasePath());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -186,7 +186,7 @@ public class MainUIController {
 			parent = fxmlLoader.load();
 
 			AddUIController dialogController = fxmlLoader.<AddUIController>getController();
-			dialogController.setLegoColors(BCMApplication.database.getLegoColors());
+			dialogController.setLegoColors(BCMApplication.getDatabase().getLegoColors());
 
 			Scene scene = new Scene(parent, 300, 200);
 			Stage stage = new Stage();

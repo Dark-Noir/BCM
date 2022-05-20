@@ -154,7 +154,7 @@ public class AddUIController implements Initializable {
 		list.clear();
 		addColorList.getItems().clear();
 
-		Color[] colors = BCMApplication.database.getLegoColors();
+		Color[] colors = BCMApplication.getDatabase().getLegoColors();
 
 		for (Color color : colors) {
 			if (color.getName().toLowerCase().contains(filter.toLowerCase())) {
