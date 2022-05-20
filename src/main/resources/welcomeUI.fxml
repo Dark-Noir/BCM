@@ -81,7 +81,7 @@
                         <Insets right="6.0" />
                      </padding>
                   </Label>
-                  <TextField fx:id="rebrickableApiKeyText" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id="rebrickableApiKeyText" GridPane.columnIndex="1" GridPane.rowIndex="1" text="46a80b7668b5acf68df5ac4b7bff9662" />
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
                      <children>
                         <Label text="You have to login at" />
