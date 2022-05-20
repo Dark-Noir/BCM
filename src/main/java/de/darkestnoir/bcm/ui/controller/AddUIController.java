@@ -1,10 +1,11 @@
-package de.darkestnoir.bcm;
+package de.darkestnoir.bcm.ui.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import org.dajlab.rebrickableapi.v3.vo.Color;
 
+import de.darkestnoir.bcm.BCMApplication;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,15 +23,30 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 public class AddUIController implements Initializable {
-	ObservableList<Colors> list = FXCollections.observableArrayList();
+	public static class ColorString {
+		private final SimpleStringProperty colorString;
+
+		public ColorString(String colorString) {
+			this.colorString = new SimpleStringProperty(colorString);
+		}
+
+		public String getColorString() {
+			return colorString.get();
+		}
+
+		@Override
+		public String toString() {
+			return colorString.get();
+		}
+
+	}
+
+	ObservableList<ColorString> list = FXCollections.observableArrayList();
 
 	private Color[] legoColors;
 
 	@FXML
 	private RadioButton addPart;
-
-	@FXML
-	private RadioButton addSet;
 
 //	@FXML
 //	private void initialize() {
@@ -38,6 +54,9 @@ public class AddUIController implements Initializable {
 //		addPart.setToggleGroup(partOrSet);
 //		addSet.setToggleGroup(partOrSet);
 //	}
+
+	@FXML
+	private RadioButton addSet;
 
 	@FXML
 	private TextField addPartSearch;
@@ -67,25 +86,31 @@ public class AddUIController implements Initializable {
 	private TextField addColorSearch;
 
 	@FXML
-	private ListView<Colors> addColorList;
+	private ListView<ColorString> addColorList;
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		ToggleGroup partOrSet = new ToggleGroup();
-		addPart.setToggleGroup(partOrSet);
-		addSet.setToggleGroup(partOrSet);
-		initiateCols();
-		loadColors("");
+	@FXML
+	public void addCategorySearchActive(ActionEvent event) {
+
+	}
+
+	@FXML
+	public void addCategorySearchTyped(KeyEvent event) {
+
+	}
+
+	@FXML
+	public void addColorSearchActive(ActionEvent event) {
+
+	}
+
+	@FXML
+	public void addColorSearchTyped(KeyEvent event) {
+		loadColors(addColorSearch.getText());
 
 	}
 
 	@FXML
 	public void addPartActive(ActionEvent event) {
-
-	}
-
-	@FXML
-	public void addSetActive(ActionEvent event) {
 
 	}
 
@@ -100,67 +125,7 @@ public class AddUIController implements Initializable {
 	}
 
 	@FXML
-	public void addCategorySearchActive(ActionEvent event) {
-
-	}
-
-	@FXML
-	public void addCategorySearchTyped(KeyEvent event) {
-
-	}
-
-	private void initiateCols() {
-//		addColorTableColumn.setCellValueFactory(new PropertyValueFactory<>("colors"));
-	}
-
-	@FXML
-	public void addColorSearchActive(ActionEvent event) {
-
-	}
-
-	@FXML
-	public void addColorSearchTyped(KeyEvent event) {
-		loadColors(addColorSearch.getText());
-
-	}
-
-	private void loadColors(String filter) {
-		list.clear();
-		addColorList.getItems().clear();
-
-		Color[] colors = UI.database.getLegoColors();
-
-		for (Color color : colors) {
-			if (color.getName().toLowerCase().contains(filter.toLowerCase())) {
-				list.add(new Colors(color.getName()));
-			}
-		}
-
-		addColorList.getItems().addAll(list);
-
-	}
-
-	public static class Colors {
-		private final SimpleStringProperty colors;
-
-		public Colors(String colors) {
-			this.colors = new SimpleStringProperty(colors);
-		}
-
-		public String getColors() {
-			return colors.get();
-		}
-
-		@Override
-		public String toString() {
-			// TODO Auto-generated method stub
-			return colors.get();
-		}
-
-	}
-
-	public void setLegoColors(Color[] legoColors) {
-		this.legoColors = legoColors;
+	public void addSetActive(ActionEvent event) {
 
 	}
 
@@ -168,6 +133,41 @@ public class AddUIController implements Initializable {
 		Node source = (Node) event.getSource();
 		Stage stage = (Stage) source.getScene().getWindow();
 		stage.close();
+	}
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		ToggleGroup partOrSet = new ToggleGroup();
+		addPart.setToggleGroup(partOrSet);
+		addSet.setToggleGroup(partOrSet);
+		initiateCols();
+		loadColors("");
+
+	}
+
+	private void initiateCols() {
+//		addColorTableColumn.setCellValueFactory(new PropertyValueFactory<>("colors"));
+	}
+
+	private void loadColors(String filter) {
+		list.clear();
+		addColorList.getItems().clear();
+
+		Color[] colors = BCMApplication.getDatabase().getLegoColors();
+
+		for (Color color : colors) {
+			if (color.getName().toLowerCase().contains(filter.toLowerCase())) {
+				list.add(new ColorString(color.getName()));
+			}
+		}
+
+		addColorList.getItems().addAll(list);
+
+	}
+
+	public void setLegoColors(Color[] legoColors) {
+		this.legoColors = legoColors;
+
 	}
 
 }

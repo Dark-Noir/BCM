@@ -2,14 +2,14 @@ package de.darkestnoir.bcm;
 
 import java.io.IOException;
 
-public class Main {
+public class BCM {
 	public static void main(String[] args) {
 		try {
 			Settings settings = FileUtils.loadSettingsFromFile("BCM.settings");
 			Database database = FileUtils.loadDatabaseFromFile(settings.getDatabasePath());
-			UI.start(true, database, settings);
+			BCMApplication.start(true, database, settings);
 		} catch (IOException e) {
-			UI.start(false, null, null);
+			BCMApplication.start(false, null, null);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
