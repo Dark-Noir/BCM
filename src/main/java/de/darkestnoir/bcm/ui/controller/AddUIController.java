@@ -23,26 +23,25 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 public class AddUIController implements Initializable {
-	public static class Colors {
-		private final SimpleStringProperty colors;
+	public static class ColorString {
+		private final SimpleStringProperty colorString;
 
-		public Colors(String colors) {
-			this.colors = new SimpleStringProperty(colors);
+		public ColorString(String colorString) {
+			this.colorString = new SimpleStringProperty(colorString);
 		}
 
-		public String getColors() {
-			return colors.get();
+		public String getColorString() {
+			return colorString.get();
 		}
 
 		@Override
 		public String toString() {
-			// TODO Auto-generated method stub
-			return colors.get();
+			return colorString.get();
 		}
 
 	}
 
-	ObservableList<Colors> list = FXCollections.observableArrayList();
+	ObservableList<ColorString> list = FXCollections.observableArrayList();
 
 	private Color[] legoColors;
 
@@ -87,7 +86,7 @@ public class AddUIController implements Initializable {
 	private TextField addColorSearch;
 
 	@FXML
-	private ListView<Colors> addColorList;
+	private ListView<ColorString> addColorList;
 
 	@FXML
 	public void addCategorySearchActive(ActionEvent event) {
@@ -158,7 +157,7 @@ public class AddUIController implements Initializable {
 
 		for (Color color : colors) {
 			if (color.getName().toLowerCase().contains(filter.toLowerCase())) {
-				list.add(new Colors(color.getName()));
+				list.add(new ColorString(color.getName()));
 			}
 		}
 
