@@ -9,7 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-public class UI extends Application {
+public class BCMApplication extends Application {
 
 	private static Stage UIStage;
 	private static boolean settingsLoaded = false;
@@ -55,9 +55,9 @@ public class UI extends Application {
 	}
 
 	public static void start(boolean settingsLoaded, Database database, Settings settings) {
-		UI.settingsLoaded = settingsLoaded;
-		UI.database = database;
-		UI.settings = settings;
+		BCMApplication.settingsLoaded = settingsLoaded;
+		BCMApplication.database = database;
+		BCMApplication.settings = settings;
 		launch();
 	}
 
@@ -67,7 +67,7 @@ public class UI extends Application {
 			settings = FileUtils.loadSettingsFromFile("BCM.settings");
 			database = FileUtils.loadDatabaseFromFile(settings.getDatabasePath());
 
-			FXMLLoader loader = new FXMLLoader(UI.class.getClassLoader().getResource("mainMenu.fxml"));
+			FXMLLoader loader = new FXMLLoader(BCMApplication.class.getClassLoader().getResource("mainMenu.fxml"));
 			loader.setControllerFactory((Class<?> type) -> {
 				try {
 					Object controller = type.newInstance();

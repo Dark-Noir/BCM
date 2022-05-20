@@ -82,7 +82,7 @@ public class UIController {
 
 					@Override
 					public void run() {
-						UI.switchToMainUI();
+						BCMApplication.switchToMainUI();
 					}
 				});
 
@@ -158,7 +158,7 @@ public class UIController {
 		} else {
 			IRebrickableService service = new RebrickableServiceImpl("46a80b7668b5acf68df5ac4b7bff9662"); // Test API key
 
-			LocalDateTime lastApiSyncTime = UI.database.getApiDate();
+			LocalDateTime lastApiSyncTime = BCMApplication.database.getApiDate();
 			LocalDateTime currentLocalDate = LocalDateTime.now();
 
 			if (lastApiSyncTime == null || currentLocalDate.isAfter(lastApiSyncTime.plusDays(1))) {
@@ -176,7 +176,7 @@ public class UIController {
 					colorList.removeAll(elementsToRemove);
 					Collections.sort(colorList);
 
-					UI.database.setLegoColors(colorList.toArray(new Color[colorList.size()]));
+					BCMApplication.database.setLegoColors(colorList.toArray(new Color[colorList.size()]));
 
 					System.out.println("Loading colors done");
 				} catch (RebrickableException e) {
@@ -194,13 +194,13 @@ public class UIController {
 //				System.out.println("Loading parts failed");
 //			}
 
-				UI.database.setApiDate(currentLocalDate);
+				BCMApplication.database.setApiDate(currentLocalDate);
 
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
 				System.out.println(dtf.format(currentLocalDate));
 
 				try {
-					FileUtils.saveDatabaseToFile(UI.database, UI.settings.getDatabasePath());
+					FileUtils.saveDatabaseToFile(BCMApplication.database, BCMApplication.settings.getDatabasePath());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -248,13 +248,13 @@ public class UIController {
 
 	@FXML
 	public void mainAddClick(ActionEvent event) {
-		FXMLLoader fxmlLoader = new FXMLLoader(UI.class.getClassLoader().getResource("addMenu.fxml"));
+		FXMLLoader fxmlLoader = new FXMLLoader(BCMApplication.class.getClassLoader().getResource("addMenu.fxml"));
 		Parent parent;
 		try {
 			parent = fxmlLoader.load();
 
 			AddUIController dialogController = fxmlLoader.<AddUIController>getController();
-			dialogController.setLegoColors(UI.database.getLegoColors());
+			dialogController.setLegoColors(BCMApplication.database.getLegoColors());
 
 			Scene scene = new Scene(parent, 300, 200);
 			Stage stage = new Stage();

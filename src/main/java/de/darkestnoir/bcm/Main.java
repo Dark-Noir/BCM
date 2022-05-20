@@ -7,9 +7,9 @@ public class Main {
 		try {
 			Settings settings = FileUtils.loadSettingsFromFile("BCM.settings");
 			Database database = FileUtils.loadDatabaseFromFile(settings.getDatabasePath());
-			UI.start(true, database, settings);
+			BCMApplication.start(true, database, settings);
 		} catch (IOException e) {
-			UI.start(false, null, null);
+			BCMApplication.start(false, null, null);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}

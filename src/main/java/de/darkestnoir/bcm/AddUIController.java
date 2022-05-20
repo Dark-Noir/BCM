@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 
 import org.dajlab.rebrickableapi.v3.vo.Color;
 
+import de.darkestnoir.bcm.BCMApplication;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -128,7 +129,7 @@ public class AddUIController implements Initializable {
 		list.clear();
 		addColorList.getItems().clear();
 
-		Color[] colors = UI.database.getLegoColors();
+		Color[] colors = BCMApplication.database.getLegoColors();
 
 		for (Color color : colors) {
 			if (color.getName().toLowerCase().contains(filter.toLowerCase())) {
