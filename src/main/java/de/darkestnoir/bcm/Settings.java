@@ -9,7 +9,6 @@ public class Settings implements Serializable {
 	private String apiKey;
 
 	public Settings() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
