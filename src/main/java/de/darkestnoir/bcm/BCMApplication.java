@@ -3,11 +3,16 @@ package de.darkestnoir.bcm;
 import java.io.IOException;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class BCMApplication extends Application {
 
@@ -46,6 +51,18 @@ public class BCMApplication extends Application {
 
 	public static void setUiStage(Stage uiStage) {
 		BCMApplication.uiStage = uiStage;
+	}
+
+	public static void showClosePopup(WindowEvent event) {
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setHeaderText("You're about to quit!");
+		alert.setContentText("Do you want to save your changes?");
+
+		if (alert.showAndWait().get() == ButtonType.OK) {
+			((Stage) (BCMApplication.getUiStage().getScene().getWindow())).close();
+		} else if (event != null) {
+			event.consume();
+		}
 	}
 
 	public static void start(boolean settingsLoaded, Database database, Settings settings) {
@@ -93,7 +110,7 @@ public class BCMApplication extends Application {
 			mainUIStage.setResizable(false);
 			mainUIStage.setMaximized(false);
 		} else {
-			root = FXMLLoader.load(getClass().getClassLoader().getResource("mainMenu.fxml"));
+			root = FXMLLoader.load(getClass().getClassLoader().getResource("mainUI.fxml"));
 			mainUIStage.setResizable(true);
 		}
 
@@ -109,6 +126,14 @@ public class BCMApplication extends Application {
 		// WelcomeUIStage.setMaxHeight(450);
 		mainUIStage.setScene(scene);
 		mainUIStage.show();
+
+		getUiStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+
+			@Override
+			public void handle(WindowEvent event) {
+				BCMApplication.showClosePopup(event);
+			}
+		});
 	}
 
 }

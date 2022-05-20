@@ -8,28 +8,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 public class MainUIController {
-
-	public static void showClosePopup(WindowEvent event) {
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setHeaderText("You're about to quit!");
-		alert.setContentText("Do you want to save your changes?");
-
-		if (alert.showAndWait().get() == ButtonType.OK) {
-			((Stage) (BCMApplication.getUiStage().getScene().getWindow())).close();
-		} else if (event != null) {
-			event.consume();
-		}
-	}
 
 	@FXML
 	private AnchorPane sceneAnchorPane;
@@ -67,7 +51,7 @@ public class MainUIController {
 
 	@FXML
 	public void quit(ActionEvent event) {
-		MainUIController.showClosePopup(null);
+		BCMApplication.showClosePopup(null);
 	}
 
 	@FXML

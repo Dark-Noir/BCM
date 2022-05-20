@@ -275,9 +275,6 @@ public class WelcomeUIController {
 
 	@FXML
 	public void welcomeQuitClick(ActionEvent event) {
-
-		Stage uiStage = (Stage) welcomeQuitButton.getScene().getWindow();
-		uiStage.close();
-
+		BCMApplication.showClosePopup(null);
 	}
 }
