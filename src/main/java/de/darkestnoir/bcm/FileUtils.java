@@ -12,8 +12,8 @@ import java.nio.file.Paths;
 public class FileUtils {
 	private static String settingsPath = System.getenv("APPDATA") + File.separator + "BCM" + File.separator;
 
-	public static boolean hasWriteAccess(String FilePath) {
-		return Files.isWritable(new File(FilePath).toPath());
+	public static boolean hasWriteAccess(String filePath) {
+		return Files.isWritable(new File(filePath).toPath());
 
 	}
 
