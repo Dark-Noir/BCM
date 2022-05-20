@@ -44,15 +44,15 @@ import javafx.stage.Stage;
 
 public class WelcomeUIController {
 
-	String databaseSaveFolderDefault1 = ((System.getenv("USERPROFILE")) + ("\\Documents\\") + ("BCM\\"));
-	String databaseSaveFolderDefault2 = ((System.getenv("USERPROFILE")) + ("\\Documents\\"));
-	String databaseSaveLocationDefault = ((System.getenv("USERPROFILE")) + ("\\Documents\\") + ("BCM\\") + ("database.db"));
+	private String databaseSaveFolderDefault1 = ((System.getenv("USERPROFILE")) + ("\\Documents\\") + ("BCM\\"));
+	private String databaseSaveFolderDefault2 = ((System.getenv("USERPROFILE")) + ("\\Documents\\"));
+	private String databaseSaveLocationDefault = ((System.getenv("USERPROFILE")) + ("\\Documents\\") + ("BCM\\") + ("database.db"));
 
 	@FXML
-	Stage uiStage;
+	private Stage uiStage;
 
 	@FXML
-	private Label databaseInvalid;
+	private Label databaseInvalidLabel;
 
 	@FXML
 	private Button welcomeQuitButton;
@@ -61,31 +61,34 @@ public class WelcomeUIController {
 	private Button databaseSaveLocationButton;
 
 	@FXML
-	private TextField databaseSaveLocationText;
+	private TextField databaseSaveLocationTextField;
 
 	@FXML
 	private Button welcomeOKButton;
 
 	@FXML
-	private TextField rebrickableApiKeyText;
+	private TextField rebrickableApiKeyTextField;
 
 	@FXML
-	private Label apiKeyInvalid;
+	private Label apiKeyInvalidLabel;
 
 	@FXML
-	private AnchorPane scenePane;
+	private AnchorPane sceneAnchorPane;
 
-	public void checkOK(String databaseSaveLocationTextNew, String rebrickableApiKeyTextNew) {
-		if (databaseSaveLocationTextNew.endsWith(".db") && rebrickableApiKeyTextNew.matches("^[A-Za-z0-9]{32,32}$")) {
-			apiKeyInvalid.setVisible(false);
-			welcomeOKButton.setDisable(false);
-		} else if (!rebrickableApiKeyTextNew.matches("^[A-Za-z0-9]{32,32}$")) {
-			apiKeyInvalid.setVisible(true);
-			welcomeOKButton.setDisable(true);
-		} else {
-			apiKeyInvalid.setVisible(false);
-			welcomeOKButton.setDisable(true);
+	public void checkInputValidity(String databaseSaveLocationText, String rebrickableApiKeyText) {
+		boolean okButtonEnabled = false;
+		boolean apiKeyValid = false;
+
+		if (rebrickableApiKeyText.matches("^[A-Za-z0-9]{32,32}$")) {
+			apiKeyValid = true;
+
+			if (databaseSaveLocationText.endsWith(".db")) {
+				okButtonEnabled = true;
+			}
 		}
+
+		apiKeyInvalidLabel.setVisible(!apiKeyValid);
+		welcomeOKButton.setDisable(okButtonEnabled);
 	}
 
 	@FXML
@@ -101,28 +104,28 @@ public class WelcomeUIController {
 		databaseLocationChooser.setInitialFileName("database.db");
 		File databaseSaveLocation = databaseLocationChooser.showSaveDialog(uiStage);
 		if (databaseSaveLocation != null) {
-			databaseSaveLocationText.setText(databaseSaveLocation.getAbsolutePath());
+			databaseSaveLocationTextField.setText(databaseSaveLocation.getAbsolutePath());
 		}
 	}
 
 	@FXML
 	public void initialize() {
 
-		if (databaseSaveLocationText != null) {
-			databaseSaveLocationText.setText(databaseSaveLocationDefault);
-			databaseSaveLocationText.textProperty().addListener(new ChangeListener<String>() {
+		if (databaseSaveLocationTextField != null) {
+			databaseSaveLocationTextField.setText(databaseSaveLocationDefault);
+			databaseSaveLocationTextField.textProperty().addListener(new ChangeListener<String>() {
 
 				@Override
 				public void changed(ObservableValue<? extends String> observable, String databaseSaveLocationTextOld, String databaseSaveLocationTextNew) {
-					checkOK(databaseSaveLocationTextNew, rebrickableApiKeyText.getText());
+					checkInputValidity(databaseSaveLocationTextNew, rebrickableApiKeyTextField.getText());
 				}
 			});
 
-			rebrickableApiKeyText.textProperty().addListener(new ChangeListener<String>() {
+			rebrickableApiKeyTextField.textProperty().addListener(new ChangeListener<String>() {
 
 				@Override
 				public void changed(ObservableValue<? extends String> observable, String rebrickableApiKeyTextOld, String rebrickableApiKeyTextNew) {
-					checkOK(databaseSaveLocationText.getText(), rebrickableApiKeyTextNew);
+					checkInputValidity(databaseSaveLocationTextField.getText(), rebrickableApiKeyTextNew);
 				}
 			});
 		} else {
@@ -220,7 +223,7 @@ public class WelcomeUIController {
 		alert.setContentText("Do you want to save your changes?");
 
 		if (alert.showAndWait().get() == ButtonType.OK) {
-			uiStage = (Stage) scenePane.getScene().getWindow();
+			uiStage = (Stage) sceneAnchorPane.getScene().getWindow();
 			uiStage.close();
 		}
 	}
@@ -235,8 +238,8 @@ public class WelcomeUIController {
 
 	@FXML
 	public void welcomeOKClick(ActionEvent event) {
-		String rebrickableApiKey = rebrickableApiKeyText.getText();
-		String databaseSaveLocation = databaseSaveLocationText.getText();
+		String rebrickableApiKey = rebrickableApiKeyTextField.getText();
+		String databaseSaveLocation = databaseSaveLocationTextField.getText();
 		System.out.println(rebrickableApiKey); // temporary
 		System.out.println(databaseSaveLocation); // temporary
 
@@ -266,7 +269,7 @@ public class WelcomeUIController {
 			} // Todo API key check
 				// Todo Check if database with same name exists
 		} catch (IOException e1) {
-			databaseInvalid.setVisible(true);
+			databaseInvalidLabel.setVisible(true);
 		}
 	}
 
