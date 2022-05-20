@@ -1,4 +1,4 @@
-package de.darkestnoir.bcm;
+package de.darkestnoir.bcm.ui.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;

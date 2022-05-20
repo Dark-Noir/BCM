@@ -18,7 +18,6 @@ import org.dajlab.rebrickableapi.v3.service.RebrickableServiceImpl;
 import org.dajlab.rebrickableapi.v3.vo.Color;
 import org.dajlab.rebrickableapi.v3.vo.RebrickableException;
 
-import de.darkestnoir.bcm.AddUIController;
 import de.darkestnoir.bcm.BCMApplication;
 import de.darkestnoir.bcm.Database;
 import de.darkestnoir.bcm.FileUtils;
@@ -43,7 +42,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class UIController {
+public class WelcomeUIController {
 
 	String databaseSaveFolderDefault1 = ((System.getenv("USERPROFILE")) + ("\\Documents\\") + ("BCM\\"));
 	String databaseSaveFolderDefault2 = ((System.getenv("USERPROFILE")) + ("\\Documents\\"));
