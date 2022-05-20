@@ -23,6 +23,25 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 public class AddUIController implements Initializable {
+	public static class Colors {
+		private final SimpleStringProperty colors;
+
+		public Colors(String colors) {
+			this.colors = new SimpleStringProperty(colors);
+		}
+
+		public String getColors() {
+			return colors.get();
+		}
+
+		@Override
+		public String toString() {
+			// TODO Auto-generated method stub
+			return colors.get();
+		}
+
+	}
+
 	ObservableList<Colors> list = FXCollections.observableArrayList();
 
 	private Color[] legoColors;
@@ -30,15 +49,15 @@ public class AddUIController implements Initializable {
 	@FXML
 	private RadioButton addPart;
 
-	@FXML
-	private RadioButton addSet;
-
 //	@FXML
 //	private void initialize() {
 //		ToggleGroup partOrSet = new ToggleGroup();
 //		addPart.setToggleGroup(partOrSet);
 //		addSet.setToggleGroup(partOrSet);
 //	}
+
+	@FXML
+	private RadioButton addSet;
 
 	@FXML
 	private TextField addPartSearch;
@@ -70,23 +89,29 @@ public class AddUIController implements Initializable {
 	@FXML
 	private ListView<Colors> addColorList;
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		ToggleGroup partOrSet = new ToggleGroup();
-		addPart.setToggleGroup(partOrSet);
-		addSet.setToggleGroup(partOrSet);
-		initiateCols();
-		loadColors("");
+	@FXML
+	public void addCategorySearchActive(ActionEvent event) {
+
+	}
+
+	@FXML
+	public void addCategorySearchTyped(KeyEvent event) {
+
+	}
+
+	@FXML
+	public void addColorSearchActive(ActionEvent event) {
+
+	}
+
+	@FXML
+	public void addColorSearchTyped(KeyEvent event) {
+		loadColors(addColorSearch.getText());
 
 	}
 
 	@FXML
 	public void addPartActive(ActionEvent event) {
-
-	}
-
-	@FXML
-	public void addSetActive(ActionEvent event) {
 
 	}
 
@@ -101,28 +126,28 @@ public class AddUIController implements Initializable {
 	}
 
 	@FXML
-	public void addCategorySearchActive(ActionEvent event) {
+	public void addSetActive(ActionEvent event) {
 
 	}
 
-	@FXML
-	public void addCategorySearchTyped(KeyEvent event) {
+	private void closeStage(ActionEvent event) {
+		Node source = (Node) event.getSource();
+		Stage stage = (Stage) source.getScene().getWindow();
+		stage.close();
+	}
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		ToggleGroup partOrSet = new ToggleGroup();
+		addPart.setToggleGroup(partOrSet);
+		addSet.setToggleGroup(partOrSet);
+		initiateCols();
+		loadColors("");
 
 	}
 
 	private void initiateCols() {
 //		addColorTableColumn.setCellValueFactory(new PropertyValueFactory<>("colors"));
-	}
-
-	@FXML
-	public void addColorSearchActive(ActionEvent event) {
-
-	}
-
-	@FXML
-	public void addColorSearchTyped(KeyEvent event) {
-		loadColors(addColorSearch.getText());
-
 	}
 
 	private void loadColors(String filter) {
@@ -141,34 +166,9 @@ public class AddUIController implements Initializable {
 
 	}
 
-	public static class Colors {
-		private final SimpleStringProperty colors;
-
-		public Colors(String colors) {
-			this.colors = new SimpleStringProperty(colors);
-		}
-
-		public String getColors() {
-			return colors.get();
-		}
-
-		@Override
-		public String toString() {
-			// TODO Auto-generated method stub
-			return colors.get();
-		}
-
-	}
-
 	public void setLegoColors(Color[] legoColors) {
 		this.legoColors = legoColors;
 
-	}
-
-	private void closeStage(ActionEvent event) {
-		Node source = (Node) event.getSource();
-		Stage stage = (Stage) source.getScene().getWindow();
-		stage.close();
 	}
 
 }

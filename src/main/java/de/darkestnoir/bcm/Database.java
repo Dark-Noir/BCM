@@ -12,21 +12,9 @@ public class Database implements Serializable {
 
 	private Color[] legoColors;
 
-	/**
-	 * @return the legoColors
-	 */
-	public Color[] getLegoColors() {
-		return legoColors;
-	}
-
-	/**
-	 * @param legoColors the legoColors to set
-	 */
-	public void setLegoColors(Color[] legoColors) {
-		this.legoColors = legoColors;
-	}
-
 	private Part[] legoParts;
+
+	private LocalDateTime apiDate;
 
 	/**
 	 * @return the legoParts
@@ -36,15 +24,6 @@ public class Database implements Serializable {
 	}
 
 	/**
-	 * @param legoParts the legoParts to set
-	 */
-	public void setLegoParts(Part[] legoParts) {
-		this.legoParts = legoParts;
-	}
-
-	private LocalDateTime apiDate;
-
-	/**
 	 * @return the apiDate
 	 */
 	public LocalDateTime getApiDate() {
@@ -52,10 +31,31 @@ public class Database implements Serializable {
 	}
 
 	/**
+	 * @return the legoColors
+	 */
+	public Color[] getLegoColors() {
+		return legoColors;
+	}
+
+	/**
 	 * @param apiDate the apiDate to set
 	 */
 	public void setApiDate(LocalDateTime apiDate) {
 		this.apiDate = apiDate;
+	}
+
+	/**
+	 * @param legoColors the legoColors to set
+	 */
+	public void setLegoColors(Color[] legoColors) {
+		this.legoColors = legoColors;
+	}
+
+	/**
+	 * @param legoParts the legoParts to set
+	 */
+	public void setLegoParts(Part[] legoParts) {
+		this.legoParts = legoParts;
 	}
 
 }

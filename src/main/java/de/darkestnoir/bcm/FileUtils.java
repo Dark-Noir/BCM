@@ -12,29 +12,6 @@ import java.nio.file.Paths;
 public class FileUtils {
 	private static String settingsPath = System.getenv("APPDATA") + File.separator + "BCM" + File.separator;
 
-	private FileUtils() {
-	}
-
-	public static Settings loadSettingsFromFile(String fileName) throws IOException, ClassNotFoundException {
-		FileInputStream fileInputStream = new FileInputStream(settingsPath + fileName);
-		ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-		Settings settings = (Settings) objectInputStream.readObject();
-		objectInputStream.close();
-		System.out.println(settings);
-		return settings;
-	}
-
-	public static void saveSettingsToFile(Settings settings, String fileName) throws IOException {
-
-		Files.createDirectories(Paths.get(settingsPath));
-
-		FileOutputStream fileOutputStream = new FileOutputStream(settingsPath + fileName);
-		ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-		objectOutputStream.writeObject(settings);
-		objectOutputStream.flush();
-		objectOutputStream.close();
-	}
-
 	public static boolean hasWriteAccess(String FilePath) {
 		return Files.isWritable(new File(FilePath).toPath());
 
@@ -49,6 +26,15 @@ public class FileUtils {
 		return database;
 	}
 
+	public static Settings loadSettingsFromFile(String fileName) throws IOException, ClassNotFoundException {
+		FileInputStream fileInputStream = new FileInputStream(settingsPath + fileName);
+		ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+		Settings settings = (Settings) objectInputStream.readObject();
+		objectInputStream.close();
+		System.out.println(settings);
+		return settings;
+	}
+
 	public static void saveDatabaseToFile(Database database, String databasePath) throws IOException {
 
 		// Files.createDirectories(Paths.get(databasePath));
@@ -58,5 +44,19 @@ public class FileUtils {
 		objectOutputStream.writeObject(database);
 		objectOutputStream.flush();
 		objectOutputStream.close();
+	}
+
+	public static void saveSettingsToFile(Settings settings, String fileName) throws IOException {
+
+		Files.createDirectories(Paths.get(settingsPath));
+
+		FileOutputStream fileOutputStream = new FileOutputStream(settingsPath + fileName);
+		ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+		objectOutputStream.writeObject(settings);
+		objectOutputStream.flush();
+		objectOutputStream.close();
+	}
+
+	private FileUtils() {
 	}
 }

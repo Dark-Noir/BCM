@@ -16,35 +16,6 @@ public class BCMApplication extends Application {
 	public static Database database;
 	public static Settings settings;
 
-	@Override
-	public void start(Stage MainUIStage) throws Exception {
-		UIStage = MainUIStage;
-
-		Parent root;
-
-		if (!settingsLoaded) {
-			root = FXMLLoader.load(getClass().getClassLoader().getResource("welcomeUI.fxml"));
-			MainUIStage.setResizable(false);
-			MainUIStage.setMaximized(false);
-		} else {
-			root = FXMLLoader.load(getClass().getClassLoader().getResource("mainMenu.fxml"));
-			MainUIStage.setResizable(true);
-		}
-
-		Scene Scene = new Scene(root);
-		Scene.getStylesheets().add(getClass().getClassLoader().getResource("application.css").toExternalForm());
-		Image icon = new Image("icons/app.png");
-		MainUIStage.getIcons().add(icon);
-		MainUIStage.setTitle("Brick Collection Manager");
-
-		// WelcomeUIStage.setMinWidth(700);
-		// WelcomeUIStage.setMinHeight(450);
-		// WelcomeUIStage.setMaxWidth(700);
-		// WelcomeUIStage.setMaxHeight(450);
-		MainUIStage.setScene(Scene);
-		MainUIStage.show();
-	}
-
 	public static void close() {
 		if (UIStage != null) {
 			UIStage.close();
@@ -88,6 +59,35 @@ public class BCMApplication extends Application {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void start(Stage MainUIStage) throws Exception {
+		UIStage = MainUIStage;
+
+		Parent root;
+
+		if (!settingsLoaded) {
+			root = FXMLLoader.load(getClass().getClassLoader().getResource("welcomeUI.fxml"));
+			MainUIStage.setResizable(false);
+			MainUIStage.setMaximized(false);
+		} else {
+			root = FXMLLoader.load(getClass().getClassLoader().getResource("mainMenu.fxml"));
+			MainUIStage.setResizable(true);
+		}
+
+		Scene Scene = new Scene(root);
+		Scene.getStylesheets().add(getClass().getClassLoader().getResource("application.css").toExternalForm());
+		Image icon = new Image("icons/app.png");
+		MainUIStage.getIcons().add(icon);
+		MainUIStage.setTitle("Brick Collection Manager");
+
+		// WelcomeUIStage.setMinWidth(700);
+		// WelcomeUIStage.setMinHeight(450);
+		// WelcomeUIStage.setMaxWidth(700);
+		// WelcomeUIStage.setMaxHeight(450);
+		MainUIStage.setScene(Scene);
+		MainUIStage.show();
 	}
 
 }

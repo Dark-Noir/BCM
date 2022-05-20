@@ -52,66 +52,41 @@ public class WelcomeUIController {
 	Stage uiStage;
 
 	@FXML
-	public void rebrickableLinkClick() {
-		try {
-			Desktop.getDesktop().browse(new URL("https://rebrickable.com/login/").toURI());
-		} catch (Exception e) {
-		}
-	}
-
-	@FXML
 	private Label databaseInvalid;
-
-	@FXML
-	public void welcomeOKClick(ActionEvent event) {
-		String rebrickableApiKey = rebrickableApiKeyText.getText();
-		String databaseSaveLocation = databaseSaveLocationText.getText();
-		System.out.println(rebrickableApiKey); // temporary
-		System.out.println(databaseSaveLocation); // temporary
-
-		String databaseFilePath = databaseSaveLocation.substring(0, databaseSaveLocation.lastIndexOf("\\"));
-		Settings settings = new Settings();
-		settings.setDatabasePath(databaseSaveLocation);
-		settings.setApiKey(rebrickableApiKey);
-
-		Database database = new Database();
-
-		try {
-			Files.createDirectories(Paths.get(databaseFilePath));
-			try {
-				FileUtils.saveSettingsToFile(settings, "BCM.settings");
-				FileUtils.saveDatabaseToFile(database, databaseSaveLocation);
-
-				Platform.runLater(new Runnable() {
-
-					@Override
-					public void run() {
-						BCMApplication.switchToMainUI();
-					}
-				});
-
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			} // Todo API key check
-				// Todo Check if database with same name exists
-		} catch (IOException e1) {
-			databaseInvalid.setVisible(true);
-		}
-	}
 
 	@FXML
 	private Button welcomeQuitButton;
 
 	@FXML
-	public void welcomeQuitClick(ActionEvent event) {
-
-		Stage uiStage = (Stage) welcomeQuitButton.getScene().getWindow();
-		uiStage.close();
-
-	}
+	private Button databaseSaveLocationButton;
 
 	@FXML
-	private Button databaseSaveLocationButton;
+	private TextField databaseSaveLocationText;
+
+	@FXML
+	private Button welcomeOKButton;
+
+	@FXML
+	private TextField rebrickableApiKeyText;
+
+	@FXML
+	private Label apiKeyInvalid;
+
+	@FXML
+	private AnchorPane scenePane;
+
+	public void checkOK(String databaseSaveLocationTextNew, String rebrickableApiKeyTextNew) {
+		if (databaseSaveLocationTextNew.endsWith(".db") && rebrickableApiKeyTextNew.matches("^[A-Za-z0-9]{32,32}$")) {
+			apiKeyInvalid.setVisible(false);
+			welcomeOKButton.setDisable(false);
+		} else if (!rebrickableApiKeyTextNew.matches("^[A-Za-z0-9]{32,32}$")) {
+			apiKeyInvalid.setVisible(true);
+			welcomeOKButton.setDisable(true);
+		} else {
+			apiKeyInvalid.setVisible(false);
+			welcomeOKButton.setDisable(true);
+		}
+	}
 
 	@FXML
 	public void databaseSaveLocationClick(ActionEvent event) {
@@ -129,15 +104,6 @@ public class WelcomeUIController {
 			databaseSaveLocationText.setText(databaseSaveLocation.getAbsolutePath());
 		}
 	}
-
-	@FXML
-	private TextField databaseSaveLocationText;
-
-	@FXML
-	private Button welcomeOKButton;
-
-	@FXML
-	private TextField rebrickableApiKeyText;
 
 	@FXML
 	public void initialize() {
@@ -213,44 +179,6 @@ public class WelcomeUIController {
 	}
 
 	@FXML
-	private Label apiKeyInvalid;
-
-	public void checkOK(String databaseSaveLocationTextNew, String rebrickableApiKeyTextNew) {
-		if (databaseSaveLocationTextNew.endsWith(".db") && rebrickableApiKeyTextNew.matches("^[A-Za-z0-9]{32,32}$")) {
-			apiKeyInvalid.setVisible(false);
-			welcomeOKButton.setDisable(false);
-		} else if (!rebrickableApiKeyTextNew.matches("^[A-Za-z0-9]{32,32}$")) {
-			apiKeyInvalid.setVisible(true);
-			welcomeOKButton.setDisable(true);
-		} else {
-			apiKeyInvalid.setVisible(false);
-			welcomeOKButton.setDisable(true);
-		}
-	}
-
-	@FXML
-	public void quit(ActionEvent event) {
-
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setHeaderText("You're abour to quit!");
-		alert.setContentText("Do you want to save your changes?");
-
-		if (alert.showAndWait().get() == ButtonType.OK) {
-			uiStage = (Stage) scenePane.getScene().getWindow();
-			uiStage.close();
-		}
-	}
-
-	@FXML
-	private AnchorPane scenePane;
-
-	@FXML
-	public void open(ActionEvent event) {
-		FileChooser chooser = new FileChooser();
-		File f = chooser.showOpenDialog(uiStage);
-	}
-
-	@FXML
 	public void mainAddClick(ActionEvent event) {
 		FXMLLoader fxmlLoader = new FXMLLoader(BCMApplication.class.getClassLoader().getResource("addMenu.fxml"));
 		Parent parent;
@@ -275,6 +203,78 @@ public class WelcomeUIController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+	}
+
+	@FXML
+	public void open(ActionEvent event) {
+		FileChooser chooser = new FileChooser();
+		File f = chooser.showOpenDialog(uiStage);
+	}
+
+	@FXML
+	public void quit(ActionEvent event) {
+
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setHeaderText("You're abour to quit!");
+		alert.setContentText("Do you want to save your changes?");
+
+		if (alert.showAndWait().get() == ButtonType.OK) {
+			uiStage = (Stage) scenePane.getScene().getWindow();
+			uiStage.close();
+		}
+	}
+
+	@FXML
+	public void rebrickableLinkClick() {
+		try {
+			Desktop.getDesktop().browse(new URL("https://rebrickable.com/login/").toURI());
+		} catch (Exception e) {
+		}
+	}
+
+	@FXML
+	public void welcomeOKClick(ActionEvent event) {
+		String rebrickableApiKey = rebrickableApiKeyText.getText();
+		String databaseSaveLocation = databaseSaveLocationText.getText();
+		System.out.println(rebrickableApiKey); // temporary
+		System.out.println(databaseSaveLocation); // temporary
+
+		String databaseFilePath = databaseSaveLocation.substring(0, databaseSaveLocation.lastIndexOf("\\"));
+		Settings settings = new Settings();
+		settings.setDatabasePath(databaseSaveLocation);
+		settings.setApiKey(rebrickableApiKey);
+
+		Database database = new Database();
+
+		try {
+			Files.createDirectories(Paths.get(databaseFilePath));
+			try {
+				FileUtils.saveSettingsToFile(settings, "BCM.settings");
+				FileUtils.saveDatabaseToFile(database, databaseSaveLocation);
+
+				Platform.runLater(new Runnable() {
+
+					@Override
+					public void run() {
+						BCMApplication.switchToMainUI();
+					}
+				});
+
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} // Todo API key check
+				// Todo Check if database with same name exists
+		} catch (IOException e1) {
+			databaseInvalid.setVisible(true);
+		}
+	}
+
+	@FXML
+	public void welcomeQuitClick(ActionEvent event) {
+
+		Stage uiStage = (Stage) welcomeQuitButton.getScene().getWindow();
+		uiStage.close();
 
 	}
 }
