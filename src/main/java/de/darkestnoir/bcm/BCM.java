@@ -2,7 +2,7 @@ package de.darkestnoir.bcm;
 
 import java.io.IOException;
 
-public class Main {
+public class BCM {
 	public static void main(String[] args) {
 		try {
 			Settings settings = FileUtils.loadSettingsFromFile("BCM.settings");
