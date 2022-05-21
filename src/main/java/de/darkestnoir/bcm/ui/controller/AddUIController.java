@@ -8,6 +8,8 @@ import org.dajlab.rebrickableapi.v3.vo.PartCategories;
 
 import de.darkestnoir.bcm.BCMApplication;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,11 +18,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class AddUIController implements Initializable {
@@ -49,18 +54,26 @@ public class AddUIController implements Initializable {
 	@FXML
 	private RadioButton addPart;
 
-//	@FXML
-//	private void initialize() {
-//		ToggleGroup partOrSet = new ToggleGroup();
-//		addPart.setToggleGroup(partOrSet);
-//		addSet.setToggleGroup(partOrSet);
-//	}
-
 	@FXML
 	private RadioButton addSet;
 
 	@FXML
 	private TextField addPartSearch;
+
+	@FXML
+	private SplitPane splitPane;
+
+	@FXML
+	private VBox partCategoryVBox;
+
+	@FXML
+	private VBox themesVBox;
+
+	@FXML
+	private VBox partTableVBox;
+
+	@FXML
+	private VBox colorVBox;
 
 	@FXML
 	private TextField addCategorySearch;
@@ -97,6 +110,17 @@ public class AddUIController implements Initializable {
 	@FXML
 	public void addCategorySearchTyped(KeyEvent event) {
 		loadPartCategories(addCategorySearch.getText());
+
+	}
+
+	@FXML
+	public void themesSearchActive(ActionEvent event) {
+
+	}
+
+	@FXML
+	public void themesSearchTyped(KeyEvent event) {
+//		loadThemes(themesSearchActive.getText());
 
 	}
 
@@ -142,10 +166,30 @@ public class AddUIController implements Initializable {
 		ToggleGroup partOrSet = new ToggleGroup();
 		addPart.setToggleGroup(partOrSet);
 		addSet.setToggleGroup(partOrSet);
+		splitPane.getItems().remove(themesVBox);
 		initiateCols();
 		loadColors("");
 		loadPartCategories("");
+		partOrSet.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+			public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
+				if (partOrSet.getSelectedToggle() != null) {
+					PartOrSet();
+				}
+			}
+		});
 
+	}
+
+	private void PartOrSet() {
+		if (addPart.isSelected()) {
+			splitPane.getItems().remove(themesVBox);
+			splitPane.getItems().add(0, partCategoryVBox);
+			splitPane.getItems().add(2, colorVBox);
+		} else {
+			splitPane.getItems().remove(partCategoryVBox);
+			splitPane.getItems().remove(colorVBox);
+			splitPane.getItems().add(0, themesVBox);
+		}
 	}
 
 	private void initiateCols() {

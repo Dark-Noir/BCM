@@ -22,15 +22,21 @@
                   <TextField fx:id="addPartSearch" onAction="#addPartSearchActive" onKeyTyped="#addPartSearchTyped" promptText="Search..." HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
-            <SplitPane dividerPositions="0.2, 0.8">
+            <SplitPane fx:id="splitPane" dividerPositions="0.2, 0.8, 0.5">
                <items>
-                  <VBox spacing="3.0">
+                  <VBox fx:id="partCategoryVBox" spacing="3.0">
                      <children>
                         <TextField fx:id="addCategorySearch" onAction="#addCategorySearchActive" onKeyTyped="#addCategorySearchTyped" promptText="Category..." />
-                        <ListView fx:id="addPartCategoriesList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                        <ListView fx:id="addPartCategoryList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
-                  <VBox spacing="3.0">
+                  <VBox fx:id="themesVBox" spacing="3.0">
+                     <children>
+                        <TextField fx:id="themesSearch" onAction="#themesSearchActive" onKeyTyped="#themesSearchTyped" promptText="Theme..." />
+                        <ListView fx:id="themesList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+                  <VBox fx:id="partTableVBox" spacing="3.0">
                      <children>
                         <TableView fx:id="addPartTable" VBox.vgrow="ALWAYS">
                           <columns>
@@ -42,7 +48,7 @@
                         </TableView>
                      </children>
                   </VBox>
-                  <VBox spacing="3.0">
+                  <VBox fx:id="colorVBox" spacing="3.0">
                      <children>
                         <TextField fx:id="addColorSearch" onAction="#addColorSearchActive" onKeyTyped="#addColorSearchTyped" promptText="Color..." />
                         <ListView fx:id="addColorList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
