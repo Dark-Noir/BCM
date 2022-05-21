@@ -25,9 +25,9 @@ import javafx.stage.Stage;
 
 public class WelcomeUIController {
 
-	private String databaseSaveFolderDefault1 = ((System.getenv("USERPROFILE")) + ("\\Documents\\") + ("BCM\\"));
 	private String databaseSaveFolderDefault2 = ((System.getenv("USERPROFILE")) + ("\\Documents\\"));
-	private String databaseSaveLocationDefault = ((System.getenv("USERPROFILE")) + ("\\Documents\\") + ("BCM\\") + ("database.db"));
+	private String databaseSaveFolderDefault1 = databaseSaveFolderDefault2 + ("BCM\\");
+	private String databaseSaveLocationDefault = databaseSaveFolderDefault1 + ("database.db");
 
 	@FXML
 	private Stage uiStage;
