@@ -78,7 +78,7 @@ public class BCMApplication extends Application {
 			setSettings(FileUtils.loadSettingsFromFile("BCM.settings"));
 			setDatabase(FileUtils.loadDatabaseFromFile(settings.getDatabasePath()));
 
-			FXMLLoader loader = new FXMLLoader(BCMApplication.class.getClassLoader().getResource("mainMenu.fxml"));
+			FXMLLoader loader = new FXMLLoader(BCMApplication.class.getClassLoader().getResource("mainUI.fxml"));
 			loader.setControllerFactory((Class<?> type) -> {
 				try {
 					Object controller = type.newInstance();
