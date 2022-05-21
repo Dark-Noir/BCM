@@ -1,8 +1,21 @@
 package de.darkestnoir.bcm.ui.controller;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.dajlab.rebrickableapi.v3.service.IRebrickableService;
+import org.dajlab.rebrickableapi.v3.service.RebrickableServiceImpl;
+import org.dajlab.rebrickableapi.v3.vo.Color;
+import org.dajlab.rebrickableapi.v3.vo.PartCategories;
+import org.dajlab.rebrickableapi.v3.vo.RebrickableException;
 
 import de.darkestnoir.bcm.BCMApplication;
+import de.darkestnoir.bcm.FileUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -56,6 +69,70 @@ public class MainUIController {
 
 	@FXML
 	public void save(ActionEvent event) {
+	}
+
+	@FXML
+	public void initialize() {
+		IRebrickableService service = new RebrickableServiceImpl(BCMApplication.getSettings().getApiKey());
+
+		LocalDateTime lastApiSyncTime = BCMApplication.getDatabase().getApiDate();
+		LocalDateTime currentLocalDate = LocalDateTime.now();
+
+		if (lastApiSyncTime == null || currentLocalDate.isAfter(lastApiSyncTime.plusDays(1))) {
+			try {
+				Color[] color = service.getColors().getAllColors();
+
+				List<Color> colorList = new ArrayList(Arrays.asList(color));
+
+				List<Color> elementsToRemove = new ArrayList<>();
+				for (Color currentColor : colorList) {
+					if (currentColor.getName().equals("[Unknown]")) {
+						elementsToRemove.add(currentColor);
+					}
+				}
+				colorList.removeAll(elementsToRemove);
+				Collections.sort(colorList);
+
+				BCMApplication.getDatabase().setLegoColors(colorList.toArray(new Color[colorList.size()]));
+
+				System.out.println("Loading colors done");
+			} catch (RebrickableException e) {
+				e.printStackTrace();
+				System.out.println("Loading colors failed");
+			}
+
+			try {
+				PartCategories[] partCategories = service.getPartCategories().getAllPartCategories();
+
+				BCMApplication.getDatabase().setPartCategories(partCategories);
+
+				System.out.println("Loading part categories done");
+			} catch (RebrickableException e) {
+				e.printStackTrace();
+				System.out.println("Loading part categories failed");
+			}
+
+//		try {
+//			Part[] part = service.getParts().getAllParts();
+//			UI.database.setLegoParts(part);
+//
+//			System.out.println("Loading parts done");
+//		} catch (RebrickableException e) {
+//			e.printStackTrace();
+//			System.out.println("Loading parts failed");
+//		}
+
+			BCMApplication.getDatabase().setApiDate(currentLocalDate);
+
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
+			System.out.println(dtf.format(currentLocalDate));
+
+			try {
+				FileUtils.saveDatabaseToFile(BCMApplication.getDatabase(), BCMApplication.getSettings().getDatabasePath());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }
