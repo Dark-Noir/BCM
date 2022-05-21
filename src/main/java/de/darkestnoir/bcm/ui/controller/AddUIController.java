@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import org.dajlab.rebrickableapi.v3.vo.Color;
+import org.dajlab.rebrickableapi.v3.vo.PartCategories;
 
 import de.darkestnoir.bcm.BCMApplication;
 import javafx.beans.property.SimpleStringProperty;
@@ -23,25 +24,25 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 public class AddUIController implements Initializable {
-	public static class ColorString {
-		private final SimpleStringProperty colorString;
+	public static class ListString {
+		private final SimpleStringProperty listString;
 
-		public ColorString(String colorString) {
-			this.colorString = new SimpleStringProperty(colorString);
+		public ListString(String listString) {
+			this.listString = new SimpleStringProperty(listString);
 		}
 
-		public String getColorString() {
-			return colorString.get();
+		public String getListString() {
+			return listString.get();
 		}
 
 		@Override
 		public String toString() {
-			return colorString.get();
+			return listString.get();
 		}
 
 	}
 
-	ObservableList<ColorString> list = FXCollections.observableArrayList();
+	ObservableList<ListString> list = FXCollections.observableArrayList();
 
 	private Color[] legoColors;
 
@@ -65,7 +66,7 @@ public class AddUIController implements Initializable {
 	private TextField addCategorySearch;
 
 	@FXML
-	private ListView<?> addCategoryList;
+	private ListView<ListString> addPartCategoriesList;
 
 	@FXML
 	private TableView<?> addPartTable;
@@ -86,7 +87,7 @@ public class AddUIController implements Initializable {
 	private TextField addColorSearch;
 
 	@FXML
-	private ListView<ColorString> addColorList;
+	private ListView<ListString> addColorList;
 
 	@FXML
 	public void addCategorySearchActive(ActionEvent event) {
@@ -142,6 +143,7 @@ public class AddUIController implements Initializable {
 		addSet.setToggleGroup(partOrSet);
 		initiateCols();
 		loadColors("");
+		loadPartCategories("");
 
 	}
 
@@ -157,7 +159,7 @@ public class AddUIController implements Initializable {
 
 		for (Color color : colors) {
 			if (color.getName().toLowerCase().contains(filter.toLowerCase())) {
-				list.add(new ColorString(color.getName()));
+				list.add(new ListString(color.getName()));
 			}
 		}
 
@@ -166,6 +168,27 @@ public class AddUIController implements Initializable {
 	}
 
 	public void setLegoColors(Color[] legoColors) {
+		this.legoColors = legoColors;
+
+	}
+
+	private void loadPartCategories(String filter) {
+		list.clear();
+		addPartCategoriesList.getItems().clear();
+
+		PartCategories[] partCategories = BCMApplication.getDatabase().getPartCategories();
+
+		for (PartCategories partCategory : partCategories) {
+			if (partCategory.getName().toLowerCase().contains(filter.toLowerCase())) {
+				list.add(new ListString(partCategory.getName()));
+			}
+		}
+
+		addPartCategoriesList.getItems().addAll(list);
+
+	}
+
+	public void setPLegoCategories(Color[] legoColors) {
 		this.legoColors = legoColors;
 
 	}

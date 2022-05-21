@@ -27,7 +27,7 @@
                   <VBox spacing="3.0">
                      <children>
                         <TextField fx:id="addCategorySearch" onAction="#addCategorySearchActive" onKeyTyped="#addCategorySearchTyped" promptText="Category..." />
-                        <ListView fx:id="addCategoryList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                        <ListView fx:id="addPartCategoriesList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
                   <VBox spacing="3.0">
