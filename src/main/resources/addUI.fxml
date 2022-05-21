@@ -4,7 +4,6 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -22,21 +21,24 @@
                   <TextField fx:id="addPartSearch" onAction="#addPartSearchActive" onKeyTyped="#addPartSearchTyped" promptText="Search..." HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
-            <SplitPane fx:id="splitPane" dividerPositions="0.2, 0.8, 0.5">
-               <items>
-                  <VBox fx:id="partCategoryVBox" spacing="3.0">
+            <HBox fx:id="mainHBox" spacing="5.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <VBox fx:id="partCategoryVBox" spacing="3.0" HBox.hgrow="ALWAYS">
                      <children>
                         <TextField fx:id="addCategorySearch" onAction="#addCategorySearchActive" onKeyTyped="#addCategorySearchTyped" promptText="Category..." />
-                        <ListView fx:id="addPartCategoryList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                        <ListView fx:id="addPartCategoryList" VBox.vgrow="ALWAYS" />
                      </children>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
                   </VBox>
-                  <VBox fx:id="themesVBox" spacing="3.0">
+                  <VBox fx:id="themesVBox" spacing="3.0" HBox.hgrow="ALWAYS">
                      <children>
                         <TextField fx:id="themesSearch" onAction="#themesSearchActive" onKeyTyped="#themesSearchTyped" promptText="Theme..." />
-                        <ListView fx:id="themesList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                        <ListView fx:id="themesList" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
-                  <VBox fx:id="partTableVBox" spacing="3.0">
+                  <VBox fx:id="partTableVBox" spacing="3.0" HBox.hgrow="ALWAYS">
                      <children>
                         <TableView fx:id="addPartTable" VBox.vgrow="ALWAYS">
                           <columns>
@@ -48,14 +50,17 @@
                         </TableView>
                      </children>
                   </VBox>
-                  <VBox fx:id="colorVBox" spacing="3.0">
+                  <VBox fx:id="colorVBox" spacing="3.0" HBox.hgrow="ALWAYS">
                      <children>
                         <TextField fx:id="addColorSearch" onAction="#addColorSearchActive" onKeyTyped="#addColorSearchTyped" promptText="Color..." />
-                        <ListView fx:id="addColorList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                        <ListView fx:id="addColorList" stylesheets="@application.css" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
-               </items>
-            </SplitPane>
+               </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </HBox>
          </children>
          <padding>
             <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />

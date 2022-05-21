@@ -39,7 +39,7 @@ public class MainUIController {
 		try {
 			parent = fxmlLoader.load();
 
-			Scene scene = new Scene(parent, 300, 200);
+			Scene scene = new Scene(parent, 1000, 500);
 			Stage stage = new Stage();
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setScene(scene);

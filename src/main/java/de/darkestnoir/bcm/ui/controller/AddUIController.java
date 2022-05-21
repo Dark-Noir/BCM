@@ -16,20 +16,25 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class AddUIController implements Initializable {
+	double cellset = 0.0;
+
 	public static class ListString {
 		private final SimpleStringProperty listString;
 
@@ -62,7 +67,7 @@ public class AddUIController implements Initializable {
 	private TextField addPartSearch;
 
 	@FXML
-	private SplitPane splitPane;
+	private HBox mainHBox;
 
 	@FXML
 	private VBox partCategoryVBox;
@@ -173,7 +178,7 @@ public class AddUIController implements Initializable {
 		ToggleGroup partOrSet = new ToggleGroup();
 		addPart.setToggleGroup(partOrSet);
 		addSet.setToggleGroup(partOrSet);
-		splitPane.getItems().remove(themesVBox);
+		mainHBox.getChildren().remove(themesVBox);
 		partOrSet.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 			public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
 				if (partOrSet.getSelectedToggle() != null) {
@@ -181,21 +186,70 @@ public class AddUIController implements Initializable {
 				}
 			}
 		});
+
+		addPartCategoryList.setCellFactory(this::cellFactory);
+		themesList.setCellFactory(this::cellFactory);
+		addColorList.setCellFactory(this::cellFactory);
+
 		loadColors("");
 		loadPartCategories("");
 		loadThemes("");
 
+		setPreferredWidth(addPartCategoryList, partCategoryVBox);
+		setPreferredWidth(themesList, themesVBox);
+		setPreferredWidth(addColorList, colorVBox);
+
+	}
+
+	private ListCell<ListString> cellFactory(ListView<ListString> view) {
+		return new MyListCell(view);
+	}
+
+	private class MyListCell extends ListCell<ListString> {
+		public MyListCell(ListView<ListString> listView) {
+			super();
+			updateListView(listView);
+			setSkin(createDefaultSkin());
+			insetsProperty().addListener(this::insetsChanged);
+		}
+
+		@Override
+		protected void updateItem(ListString item, boolean empty) {
+			super.updateItem(item, empty);
+			if (item != null) {
+				setText(item.getListString());
+			}
+
+			if (empty) {
+				setText("");
+			}
+		}
+
+		private void insetsChanged(ObservableValue<? extends Insets> observable, Insets oldValue, Insets newValue) {
+			cellset = newValue.getLeft() + newValue.getRight();
+		}
+	}
+
+	private void setPreferredWidth(ListView<ListString> listView, Pane pane) {
+		ListCell<ListString> cell = new MyListCell(listView);
+		double width = 0.0;
+		for (ListString item : listView.getItems()) {
+			cell.setText(item.getListString() + "         ");
+			width = Math.max(width, cell.prefWidth(-1));
+		}
+
+		pane.setMaxWidth(width + listView.getInsets().getLeft() + listView.getInsets().getRight());
 	}
 
 	private void PartOrSet() {
 		if (addPart.isSelected()) {
-			splitPane.getItems().remove(themesVBox);
-			splitPane.getItems().add(0, partCategoryVBox);
-			splitPane.getItems().add(2, colorVBox);
+			mainHBox.getChildren().remove(themesVBox);
+			mainHBox.getChildren().add(0, partCategoryVBox);
+			mainHBox.getChildren().add(2, colorVBox);
 		} else {
-			splitPane.getItems().add(0, themesVBox);
-			splitPane.getItems().remove(partCategoryVBox);
-			splitPane.getItems().remove(colorVBox);
+			mainHBox.getChildren().add(0, themesVBox);
+			mainHBox.getChildren().remove(partCategoryVBox);
+			mainHBox.getChildren().remove(colorVBox);
 		}
 	}
 
@@ -212,7 +266,6 @@ public class AddUIController implements Initializable {
 		}
 
 		addColorList.getItems().addAll(list);
-
 	}
 
 	private void loadPartCategories(String filter) {
