@@ -66,7 +66,7 @@ public class AddUIController implements Initializable {
 	private TextField addCategorySearch;
 
 	@FXML
-	private ListView<ListString> addPartCategoriesList;
+	private ListView<ListString> addPartCategoryList;
 
 	@FXML
 	private TableView<?> addPartTable;
@@ -96,6 +96,7 @@ public class AddUIController implements Initializable {
 
 	@FXML
 	public void addCategorySearchTyped(KeyEvent event) {
+		loadPartCategories(addCategorySearch.getText());
 
 	}
 
@@ -174,7 +175,7 @@ public class AddUIController implements Initializable {
 
 	private void loadPartCategories(String filter) {
 		list.clear();
-		addPartCategoriesList.getItems().clear();
+		addPartCategoryList.getItems().clear();
 
 		PartCategories[] partCategories = BCMApplication.getDatabase().getPartCategories();
 
@@ -184,7 +185,7 @@ public class AddUIController implements Initializable {
 			}
 		}
 
-		addPartCategoriesList.getItems().addAll(list);
+		addPartCategoryList.getItems().addAll(list);
 
 	}
 

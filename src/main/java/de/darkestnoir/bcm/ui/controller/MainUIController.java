@@ -104,7 +104,11 @@ public class MainUIController {
 			try {
 				PartCategories[] partCategories = service.getPartCategories().getAllPartCategories();
 
-				BCMApplication.getDatabase().setPartCategories(partCategories);
+				List<PartCategories> partCategoriesList = new ArrayList(Arrays.asList(partCategories));
+
+				Collections.sort(partCategoriesList);
+
+				BCMApplication.getDatabase().setPartCategories(partCategoriesList.toArray(new PartCategories[partCategoriesList.size()]));
 
 				System.out.println("Loading part categories done");
 			} catch (RebrickableException e) {
