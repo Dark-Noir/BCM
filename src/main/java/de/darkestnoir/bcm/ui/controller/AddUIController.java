@@ -4,11 +4,13 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import org.dajlab.rebrickableapi.v3.vo.Color;
+import org.dajlab.rebrickableapi.v3.vo.Part;
 import org.dajlab.rebrickableapi.v3.vo.PartCategories;
 import org.dajlab.rebrickableapi.v3.vo.Themes;
 
 import de.darkestnoir.bcm.BCMApplication;
 import de.darkestnoir.bcm.ListString;
+import de.darkestnoir.bcm.PartTableElementModel;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -26,6 +28,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -76,19 +79,25 @@ public class AddUIController implements Initializable {
 	private ListView<ListString> themesList;
 
 	@FXML
-	private TableView<?> addPartTable;
+	private TableView<PartTableElementModel> addPartTable;
 
 	@FXML
-	private TableColumn<?, ?> addPartColumnImage;
+	private TableColumn<PartTableElementModel, String> addPartColumnImage;
 
 	@FXML
-	private TableColumn<?, ?> addPartColumnBrand;
+	private TableColumn<PartTableElementModel, String> addPartColumnBrand;
 
 	@FXML
-	private TableColumn<?, ?> addPartColumnNumber;
+	private TableColumn<PartTableElementModel, String> addPartColumnNumber;
 
 	@FXML
-	private TableColumn<?, ?> addPartColumnDesc;
+	private TableColumn<PartTableElementModel, String> addPartColumnANumber;
+
+	@FXML
+	private TableColumn<PartTableElementModel, String> addPartColumnName;
+
+	@FXML
+	private TableColumn<PartTableElementModel, String> addPartColumnCategory;
 
 	@FXML
 	private TextField addColorSearch;
@@ -176,6 +185,7 @@ public class AddUIController implements Initializable {
 		loadColors("");
 		loadPartCategories("");
 		loadThemes("");
+		loadParts();
 
 		setPreferredWidth(addPartCategoryList, partCategoryVBox);
 		setPreferredWidth(themesList, themesVBox);
@@ -280,6 +290,29 @@ public class AddUIController implements Initializable {
 
 		themesList.getItems().addAll(list);
 
+	}
+
+	private void loadParts() {
+
+		addPartColumnImage.setCellValueFactory(new PropertyValueFactory<>("partImage"));
+		addPartColumnBrand.setCellValueFactory(new PropertyValueFactory<>("partBrand"));
+		addPartColumnNumber.setCellValueFactory(new PropertyValueFactory<>("partNumber"));
+		addPartColumnANumber.setCellValueFactory(new PropertyValueFactory<>("partANumber"));
+		addPartColumnName.setCellValueFactory(new PropertyValueFactory<>("partName"));
+		addPartColumnCategory.setCellValueFactory(new PropertyValueFactory<>("partCategory"));
+
+		Part[] parts = BCMApplication.getDatabase().getAllParts();
+
+		ObservableList<PartTableElementModel> partTablelist = FXCollections.observableArrayList();
+		for (Part part : parts) {
+
+			PartTableElementModel partTableElementModel = new PartTableElementModel(part.getPartImgUrl(), "Lego", part.getPartNum(), "ANumber", part.getName(),
+					part.getPartCatId());
+
+			partTablelist.add(partTableElementModel);
+		}
+		System.out.println(partTablelist.size());
+		addPartTable.setItems(partTablelist);
 	}
 
 }
