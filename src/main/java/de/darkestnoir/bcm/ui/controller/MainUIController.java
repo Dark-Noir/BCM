@@ -13,6 +13,7 @@ import org.dajlab.rebrickableapi.v3.service.RebrickableServiceImpl;
 import org.dajlab.rebrickableapi.v3.vo.Color;
 import org.dajlab.rebrickableapi.v3.vo.PartCategories;
 import org.dajlab.rebrickableapi.v3.vo.RebrickableException;
+import org.dajlab.rebrickableapi.v3.vo.Themes;
 
 import de.darkestnoir.bcm.BCMApplication;
 import de.darkestnoir.bcm.FileUtils;
@@ -37,9 +38,6 @@ public class MainUIController {
 		Parent parent;
 		try {
 			parent = fxmlLoader.load();
-
-			AddUIController dialogController = fxmlLoader.<AddUIController>getController();
-			dialogController.setLegoColors(BCMApplication.getDatabase().getLegoColors());
 
 			Scene scene = new Scene(parent, 300, 200);
 			Stage stage = new Stage();
@@ -114,6 +112,21 @@ public class MainUIController {
 			} catch (RebrickableException e) {
 				e.printStackTrace();
 				System.out.println("Loading part categories failed");
+			}
+
+			try {
+				Themes[] themes = service.getThemes().getAllThemes();
+
+				List<Themes> themesList = new ArrayList(Arrays.asList(themes));
+
+				Collections.sort(themesList);
+
+				BCMApplication.getDatabase().setThemes(themesList.toArray(new Themes[themesList.size()]));
+
+				System.out.println("Loading themes done");
+			} catch (RebrickableException e) {
+				e.printStackTrace();
+				System.out.println("Loading themes failed");
 			}
 
 //		try {

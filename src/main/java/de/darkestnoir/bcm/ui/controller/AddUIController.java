@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 
 import org.dajlab.rebrickableapi.v3.vo.Color;
 import org.dajlab.rebrickableapi.v3.vo.PartCategories;
+import org.dajlab.rebrickableapi.v3.vo.Themes;
 
 import de.darkestnoir.bcm.BCMApplication;
 import javafx.beans.property.SimpleStringProperty;
@@ -80,6 +81,9 @@ public class AddUIController implements Initializable {
 
 	@FXML
 	private ListView<ListString> addPartCategoryList;
+
+	@FXML
+	private ListView<ListString> themesList;
 
 	@FXML
 	private TableView<?> addPartTable;
@@ -167,9 +171,6 @@ public class AddUIController implements Initializable {
 		addPart.setToggleGroup(partOrSet);
 		addSet.setToggleGroup(partOrSet);
 		splitPane.getItems().remove(themesVBox);
-		initiateCols();
-		loadColors("");
-		loadPartCategories("");
 		partOrSet.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 			public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
 				if (partOrSet.getSelectedToggle() != null) {
@@ -177,6 +178,10 @@ public class AddUIController implements Initializable {
 				}
 			}
 		});
+		initiateCols();
+		loadColors("");
+		loadPartCategories("");
+		loadThemes("");
 
 	}
 
@@ -212,11 +217,6 @@ public class AddUIController implements Initializable {
 
 	}
 
-	public void setLegoColors(Color[] legoColors) {
-		this.legoColors = legoColors;
-
-	}
-
 	private void loadPartCategories(String filter) {
 		list.clear();
 		addPartCategoryList.getItems().clear();
@@ -233,8 +233,19 @@ public class AddUIController implements Initializable {
 
 	}
 
-	public void setPLegoCategories(Color[] legoColors) {
-		this.legoColors = legoColors;
+	private void loadThemes(String filter) {
+		list.clear();
+		themesList.getItems().clear();
+
+		Themes[] themes = BCMApplication.getDatabase().getThemes();
+
+		for (Themes theme : themes) {
+			if (theme.getName().toLowerCase().contains(filter.toLowerCase())) {
+				list.add(new ListString(theme.getName()));
+			}
+		}
+
+		themesList.getItems().addAll(list);
 
 	}
 

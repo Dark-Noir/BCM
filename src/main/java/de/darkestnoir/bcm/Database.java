@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import org.dajlab.rebrickableapi.v3.vo.Color;
 import org.dajlab.rebrickableapi.v3.vo.Part;
 import org.dajlab.rebrickableapi.v3.vo.PartCategories;
+import org.dajlab.rebrickableapi.v3.vo.Themes;
 
 public class Database implements Serializable {
 
@@ -14,6 +15,8 @@ public class Database implements Serializable {
 	private Color[] legoColors;
 
 	private PartCategories[] partCategories;
+
+	private Themes[] themes;
 
 	private Part[] legoParts;
 
@@ -41,6 +44,13 @@ public class Database implements Serializable {
 	}
 
 	/**
+	 * @return the themes
+	 */
+	public Themes[] getThemes() {
+		return themes;
+	}
+
+	/**
 	 * @return the legoParts
 	 */
 	public Part[] getAllParts() {
@@ -61,11 +71,12 @@ public class Database implements Serializable {
 		this.legoColors = legoColors;
 	}
 
-	/**
-	 * @param legoColors the legoColors to set
-	 */
 	public void setPartCategories(PartCategories[] partCategories) {
 		this.partCategories = partCategories;
+	}
+
+	public void setThemes(Themes[] themes) {
+		this.themes = themes;
 	}
 
 	/**
