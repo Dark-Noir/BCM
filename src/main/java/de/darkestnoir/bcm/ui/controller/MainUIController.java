@@ -11,6 +11,7 @@ import java.util.List;
 import org.dajlab.rebrickableapi.v3.service.IRebrickableService;
 import org.dajlab.rebrickableapi.v3.service.RebrickableServiceImpl;
 import org.dajlab.rebrickableapi.v3.vo.Color;
+import org.dajlab.rebrickableapi.v3.vo.Part;
 import org.dajlab.rebrickableapi.v3.vo.PartCategories;
 import org.dajlab.rebrickableapi.v3.vo.RebrickableException;
 import org.dajlab.rebrickableapi.v3.vo.Themes;
@@ -129,15 +130,15 @@ public class MainUIController {
 				System.out.println("Loading themes failed");
 			}
 
-//		try {
-//			Part[] part = service.getParts().getAllParts();
-//			UI.database.setLegoParts(part);
-//
-//			System.out.println("Loading parts done");
-//		} catch (RebrickableException e) {
-//			e.printStackTrace();
-//			System.out.println("Loading parts failed");
-//		}
+			try {
+				Part[] part = service.getParts().getAllParts();
+				BCMApplication.getDatabase().setLegoParts(part);
+
+				System.out.println("Loading parts done");
+			} catch (RebrickableException e) {
+				e.printStackTrace();
+				System.out.println("Loading parts failed");
+			}
 
 			BCMApplication.getDatabase().setApiDate(currentLocalDate);
 
