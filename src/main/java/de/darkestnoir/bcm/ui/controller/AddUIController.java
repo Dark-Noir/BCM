@@ -83,6 +83,9 @@ public class AddUIController implements Initializable {
 	private ListView<ListString> addPartCategoryList;
 
 	@FXML
+	private TextField themesSearch;
+
+	@FXML
 	private ListView<ListString> themesList;
 
 	@FXML
@@ -124,7 +127,7 @@ public class AddUIController implements Initializable {
 
 	@FXML
 	public void themesSearchTyped(KeyEvent event) {
-//		loadThemes(themesSearchActive.getText());
+		loadThemes(themesSearch.getText());
 
 	}
 
@@ -178,7 +181,6 @@ public class AddUIController implements Initializable {
 				}
 			}
 		});
-		initiateCols();
 		loadColors("");
 		loadPartCategories("");
 		loadThemes("");
@@ -191,14 +193,10 @@ public class AddUIController implements Initializable {
 			splitPane.getItems().add(0, partCategoryVBox);
 			splitPane.getItems().add(2, colorVBox);
 		} else {
+			splitPane.getItems().add(0, themesVBox);
 			splitPane.getItems().remove(partCategoryVBox);
 			splitPane.getItems().remove(colorVBox);
-			splitPane.getItems().add(0, themesVBox);
 		}
-	}
-
-	private void initiateCols() {
-//		addColorTableColumn.setCellValueFactory(new PropertyValueFactory<>("colors"));
 	}
 
 	private void loadColors(String filter) {
