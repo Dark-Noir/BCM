@@ -8,7 +8,7 @@ import org.dajlab.rebrickableapi.v3.vo.PartCategories;
 import org.dajlab.rebrickableapi.v3.vo.Themes;
 
 import de.darkestnoir.bcm.BCMApplication;
-import javafx.beans.property.SimpleStringProperty;
+import de.darkestnoir.bcm.ListString;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -34,24 +34,6 @@ import javafx.stage.Stage;
 
 public class AddUIController implements Initializable {
 	double cellset = 0.0;
-
-	public static class ListString {
-		private final SimpleStringProperty listString;
-
-		public ListString(String listString) {
-			this.listString = new SimpleStringProperty(listString);
-		}
-
-		public String getListString() {
-			return listString.get();
-		}
-
-		@Override
-		public String toString() {
-			return listString.get();
-		}
-
-	}
 
 	ObservableList<ListString> list = FXCollections.observableArrayList();
 
