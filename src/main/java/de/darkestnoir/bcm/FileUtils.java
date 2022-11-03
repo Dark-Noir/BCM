@@ -14,7 +14,6 @@ public class FileUtils {
 
 	public static boolean hasWriteAccess(String filePath) {
 		return Files.isWritable(new File(filePath).toPath());
-
 	}
 
 	public static Database loadDatabaseFromFile(String databasePath) throws IOException, ClassNotFoundException {
@@ -40,19 +39,19 @@ public class FileUtils {
 		// Files.createDirectories(Paths.get(databasePath));
 
 		FileOutputStream fileOutputStream = new FileOutputStream(databasePath);
-		ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-		objectOutputStream.writeObject(database);
-		objectOutputStream.flush();
-		objectOutputStream.close();
+		writeObject(database, fileOutputStream);
 	}
 
 	public static void saveSettingsToFile(Settings settings, String fileName) throws IOException {
-
 		Files.createDirectories(Paths.get(settingsPath));
 
 		FileOutputStream fileOutputStream = new FileOutputStream(settingsPath + fileName);
+		writeObject(settings, fileOutputStream);
+	}
+
+	private static void writeObject(Object object, FileOutputStream fileOutputStream) throws IOException {
 		ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-		objectOutputStream.writeObject(settings);
+		objectOutputStream.writeObject(object);
 		objectOutputStream.flush();
 		objectOutputStream.close();
 	}
