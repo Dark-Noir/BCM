@@ -23,6 +23,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -43,6 +44,37 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class AddUIController implements Initializable {
+	private class MyListCell extends ListCell<ListString> {
+		public MyListCell(ListView<ListString> listView) {
+			super();
+			updateListView(listView);
+			setSkin(createDefaultSkin());
+			insetsProperty().addListener(this::insetsChanged);
+		}
+
+		private void insetsChanged(ObservableValue<? extends Insets> observable, Insets oldValue, Insets newValue) {
+			cellset = newValue.getLeft() + newValue.getRight();
+		}
+
+		@Override
+		protected void updateItem(ListString item, boolean empty) {
+			super.updateItem(item, empty);
+			if (item != null) {
+				setText(item.getListString());
+			}
+
+			if (empty) {
+				setText("");
+			}
+		}
+	}
+
+	private static final Executor exec = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), r -> {
+		Thread t = new Thread(r);
+		t.setDaemon(true);
+		return t;
+	});
+
 	double cellset = 0.0;
 
 	ObservableList<ListString> list = FXCollections.observableArrayList();
@@ -124,17 +156,6 @@ public class AddUIController implements Initializable {
 	}
 
 	@FXML
-	public void themesSearchActive(ActionEvent event) {
-
-	}
-
-	@FXML
-	public void themesSearchTyped(KeyEvent event) {
-		loadThemes(themesSearch.getText());
-
-	}
-
-	@FXML
 	public void addColorSearchActive(ActionEvent event) {
 
 	}
@@ -165,6 +186,10 @@ public class AddUIController implements Initializable {
 
 	}
 
+	private ListCell<ListString> cellFactory(ListView<ListString> view) {
+		return new MyListCell(view);
+	}
+
 	private void closeStage(ActionEvent event) {
 		Node source = (Node) event.getSource();
 		Stage stage = (Stage) source.getScene().getWindow();
@@ -178,9 +203,10 @@ public class AddUIController implements Initializable {
 		addSet.setToggleGroup(partOrSet);
 		mainHBox.getChildren().remove(themesVBox);
 		partOrSet.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-			public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
+			@Override
+			public void changed(ObservableValue<? extends Toggle> ov, Toggle oldToggle, Toggle newToggle) {
 				if (partOrSet.getSelectedToggle() != null) {
-					PartOrSet();
+					partOrSet();
 				}
 			}
 		});
@@ -200,56 +226,8 @@ public class AddUIController implements Initializable {
 
 	}
 
-	private ListCell<ListString> cellFactory(ListView<ListString> view) {
-		return new MyListCell(view);
-	}
-
-	private class MyListCell extends ListCell<ListString> {
-		public MyListCell(ListView<ListString> listView) {
-			super();
-			updateListView(listView);
-			setSkin(createDefaultSkin());
-			insetsProperty().addListener(this::insetsChanged);
-		}
-
-		@Override
-		protected void updateItem(ListString item, boolean empty) {
-			super.updateItem(item, empty);
-			if (item != null) {
-				setText(item.getListString());
-			}
-
-			if (empty) {
-				setText("");
-			}
-		}
-
-		private void insetsChanged(ObservableValue<? extends Insets> observable, Insets oldValue, Insets newValue) {
-			cellset = newValue.getLeft() + newValue.getRight();
-		}
-	}
-
-	private void setPreferredWidth(ListView<ListString> listView, Pane pane) {
-		ListCell<ListString> cell = new MyListCell(listView);
-		double width = 0.0;
-		for (ListString item : listView.getItems()) {
-			cell.setText(item.getListString() + "         ");
-			width = Math.max(width, cell.prefWidth(-1));
-		}
-
-		pane.setMaxWidth(width + listView.getInsets().getLeft() + listView.getInsets().getRight());
-	}
-
-	private void PartOrSet() {
-		if (addPart.isSelected()) {
-			mainHBox.getChildren().remove(themesVBox);
-			mainHBox.getChildren().add(0, partCategoryVBox);
-			mainHBox.getChildren().add(2, colorVBox);
-		} else {
-			mainHBox.getChildren().add(0, themesVBox);
-			mainHBox.getChildren().remove(partCategoryVBox);
-			mainHBox.getChildren().remove(colorVBox);
-		}
+	private boolean isImageViewInteractable(ImageView imageView) {
+		return imageView.getImage() != null && imageView.getImage().getUrl().contains("http");
 	}
 
 	private void loadColors(String filter) {
@@ -283,46 +261,56 @@ public class AddUIController implements Initializable {
 
 	}
 
-	private void loadThemes(String filter) {
-		list.clear();
-		themesList.getItems().clear();
-
-		Themes[] themes = BCMApplication.getDatabase().getThemes();
-
-		for (Themes theme : themes) {
-			if (theme.getName().toLowerCase().contains(filter.toLowerCase())) {
-				list.add(new ListString(theme.getName()));
-			}
-		}
-
-		themesList.getItems().addAll(list);
-
-	}
-
-	private static final Executor exec = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), r -> {
-		Thread t = new Thread(r);
-		t.setDaemon(true);
-		return t;
-	});
-
 	private void loadParts() {
 
 		addPartColumnImage.setCellValueFactory(new PropertyValueFactory<>("partImage"));
 
 		addPartColumnImage.setCellFactory(tc -> {
-			TableCell<PartTableElementModel, String> cell = new TableCell<PartTableElementModel, String>() {
+			return new TableCell<PartTableElementModel, String>() {
 				private final ImageView imageView = new ImageView();
 				private final ImageCache imageCache = ImageCache.getInstance();
 				private Task<Image> dataLoadTask;
+
+				private void loadImage(String url) {
+					if (dataLoadTask != null) {
+						dataLoadTask.cancel();
+					}
+
+					dataLoadTask = new Task<Image>() {
+						@Override
+						public Image call() {
+							return imageCache.get(url);
+						}
+					};
+
+					dataLoadTask.setOnSucceeded(e -> {
+						imageView.setImage(dataLoadTask.getValue());
+						setGraphic(imageView);
+					});
+
+					exec.execute(dataLoadTask);
+				}
 
 				@Override
 				protected void updateItem(String url, boolean empty) {
 					super.updateItem(url, empty);
 
-					System.out.println(getIndex() + " " + empty + " " + isVisible());
-
 					imageView.setPreserveRatio(true);
 					imageView.setFitWidth(48);
+
+					setOnMouseEntered(event -> {
+						if (isImageViewInteractable(imageView)) {
+							setCursor(Cursor.HAND);
+						}
+					});
+
+					setOnMouseExited(event -> setCursor(Cursor.DEFAULT));
+
+					setOnMouseClicked(event -> {
+						if (isImageViewInteractable(imageView)) {
+							// TODO
+						}
+					});
 
 					if (url != null && !url.trim().isEmpty()) {
 						try {
@@ -334,29 +322,7 @@ public class AddUIController implements Initializable {
 						loadImage("icons/image_not_supported.png");
 					}
 				}
-
-				private void loadImage(String url) {
-					if (dataLoadTask != null) {
-						dataLoadTask.cancel();
-					}
-
-					dataLoadTask = new Task<Image>() {
-						@Override
-						public Image call() {
-							return imageCache.get(url);
-						};
-					};
-
-					dataLoadTask.setOnSucceeded(e -> {
-						imageView.setImage(dataLoadTask.getValue());
-						setGraphic(imageView);
-					});
-
-					exec.execute(dataLoadTask);
-				}
 			};
-
-			return cell;
 		});
 
 		addPartColumnBrand.setCellValueFactory(new PropertyValueFactory<>("partBrand"));
@@ -377,6 +343,56 @@ public class AddUIController implements Initializable {
 		}
 		System.out.println(partTablelist.size());
 		addPartTable.setItems(partTablelist);
+	}
+
+	private void loadThemes(String filter) {
+		list.clear();
+		themesList.getItems().clear();
+
+		Themes[] themes = BCMApplication.getDatabase().getThemes();
+
+		for (Themes theme : themes) {
+			if (theme.getName().toLowerCase().contains(filter.toLowerCase())) {
+				list.add(new ListString(theme.getName()));
+			}
+		}
+
+		themesList.getItems().addAll(list);
+
+	}
+
+	private void partOrSet() {
+		if (addPart.isSelected()) {
+			mainHBox.getChildren().remove(themesVBox);
+			mainHBox.getChildren().add(0, partCategoryVBox);
+			mainHBox.getChildren().add(2, colorVBox);
+		} else {
+			mainHBox.getChildren().add(0, themesVBox);
+			mainHBox.getChildren().remove(partCategoryVBox);
+			mainHBox.getChildren().remove(colorVBox);
+		}
+	}
+
+	private void setPreferredWidth(ListView<ListString> listView, Pane pane) {
+		ListCell<ListString> cell = new MyListCell(listView);
+		double width = 0.0;
+		for (ListString item : listView.getItems()) {
+			cell.setText(item.getListString() + "         ");
+			width = Math.max(width, cell.prefWidth(-1));
+		}
+
+		pane.setMaxWidth(width + listView.getInsets().getLeft() + listView.getInsets().getRight());
+	}
+
+	@FXML
+	public void themesSearchActive(ActionEvent event) {
+
+	}
+
+	@FXML
+	public void themesSearchTyped(KeyEvent event) {
+		loadThemes(themesSearch.getText());
+
 	}
 
 }
