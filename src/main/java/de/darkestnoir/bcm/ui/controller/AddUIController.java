@@ -2,6 +2,8 @@ package de.darkestnoir.bcm.ui.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import org.dajlab.rebrickableapi.v3.vo.Color;
 import org.dajlab.rebrickableapi.v3.vo.Part;
@@ -9,12 +11,14 @@ import org.dajlab.rebrickableapi.v3.vo.PartCategories;
 import org.dajlab.rebrickableapi.v3.vo.Themes;
 
 import de.darkestnoir.bcm.BCMApplication;
+import de.darkestnoir.bcm.ImageCache;
 import de.darkestnoir.bcm.ListString;
 import de.darkestnoir.bcm.PartTableElementModel;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -23,12 +27,15 @@ import javafx.scene.Node;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -292,9 +299,66 @@ public class AddUIController implements Initializable {
 
 	}
 
+	private static final Executor exec = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), r -> {
+		Thread t = new Thread(r);
+		t.setDaemon(true);
+		return t;
+	});
+
 	private void loadParts() {
 
 		addPartColumnImage.setCellValueFactory(new PropertyValueFactory<>("partImage"));
+
+		addPartColumnImage.setCellFactory(tc -> {
+			TableCell<PartTableElementModel, String> cell = new TableCell<PartTableElementModel, String>() {
+				private final ImageView imageView = new ImageView();
+				private final ImageCache imageCache = ImageCache.getInstance();
+				private Task<Image> dataLoadTask;
+
+				@Override
+				protected void updateItem(String url, boolean empty) {
+					super.updateItem(url, empty);
+
+					System.out.println(getIndex() + " " + empty + " " + isVisible());
+
+					imageView.setPreserveRatio(true);
+					imageView.setFitWidth(48);
+
+					if (url != null && !url.trim().isEmpty()) {
+						try {
+							loadImage(url);
+						} catch (Exception e) {
+							loadImage("icons/image_not_supported.png");
+						}
+					} else {
+						loadImage("icons/image_not_supported.png");
+					}
+				}
+
+				private void loadImage(String url) {
+					if (dataLoadTask != null) {
+						dataLoadTask.cancel();
+					}
+
+					dataLoadTask = new Task<Image>() {
+						@Override
+						public Image call() {
+							return imageCache.get(url);
+						};
+					};
+
+					dataLoadTask.setOnSucceeded(e -> {
+						imageView.setImage(dataLoadTask.getValue());
+						setGraphic(imageView);
+					});
+
+					exec.execute(dataLoadTask);
+				}
+			};
+
+			return cell;
+		});
+
 		addPartColumnBrand.setCellValueFactory(new PropertyValueFactory<>("partBrand"));
 		addPartColumnNumber.setCellValueFactory(new PropertyValueFactory<>("partNumber"));
 		addPartColumnANumber.setCellValueFactory(new PropertyValueFactory<>("partANumber"));
