@@ -25,6 +25,8 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
@@ -38,10 +40,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class AddUIController implements Initializable {
 	private class MyListCell extends ListCell<ListString> {
@@ -271,7 +275,19 @@ public class AddUIController implements Initializable {
 				private final ImageCache imageCache = ImageCache.getInstance();
 				private Task<Image> dataLoadTask;
 
-				private void loadImage(String url) {
+				private void handleImageLoading(String url, ImageView imageView, Labeled node) {
+					if (url != null && !url.trim().isEmpty()) {
+						try {
+							loadImage(url, imageView, node);
+						} catch (Exception e) {
+							loadImage("icons/image_not_supported.png", imageView, node);
+						}
+					} else {
+						loadImage("icons/image_not_supported.png", imageView, node);
+					}
+				}
+
+				private void loadImage(String url, ImageView imageView, Labeled node) {
 					if (dataLoadTask != null) {
 						dataLoadTask.cancel();
 					}
@@ -285,7 +301,9 @@ public class AddUIController implements Initializable {
 
 					dataLoadTask.setOnSucceeded(e -> {
 						imageView.setImage(dataLoadTask.getValue());
-						setGraphic(imageView);
+						if (node != null) {
+							node.setGraphic(imageView);
+						}
 					});
 
 					exec.execute(dataLoadTask);
@@ -308,19 +326,30 @@ public class AddUIController implements Initializable {
 
 					setOnMouseClicked(event -> {
 						if (isImageViewInteractable(imageView)) {
-							// TODO
+							BorderPane root = new BorderPane();
+
+							final ImageView alertImageView = new ImageView();
+
+							alertImageView.setPreserveRatio(true);
+							alertImageView.setFitWidth(500);
+							alertImageView.setFitHeight(500);
+							handleImageLoading(url, alertImageView, null);
+
+							root.setCenter(alertImageView);
+
+							Scene errorScene = new Scene(root, 500, 500);
+							Stage errorStage = new Stage();
+
+							root.setOnMouseClicked(evt -> errorStage.close());
+
+							errorStage.setScene(errorScene);
+							errorStage.initStyle(StageStyle.UNDECORATED);
+							errorStage.initOwner(BCMApplication.getUiStage());
+							errorStage.show();
 						}
 					});
 
-					if (url != null && !url.trim().isEmpty()) {
-						try {
-							loadImage(url);
-						} catch (Exception e) {
-							loadImage("icons/image_not_supported.png");
-						}
-					} else {
-						loadImage("icons/image_not_supported.png");
-					}
+					handleImageLoading(url, imageView, this);
 				}
 			};
 		});
