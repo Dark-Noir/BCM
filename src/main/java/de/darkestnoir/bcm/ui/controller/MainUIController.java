@@ -40,15 +40,15 @@ public class MainUIController {
 		try {
 			parent = fxmlLoader.load();
 
-			Scene scene = new Scene(parent, 1000, 500);
+			Scene scene = new Scene(parent, 1024, 736);
 			Stage stage = new Stage();
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setScene(scene);
 			Image icon = new Image("icons/app.png");
 			stage.getIcons().add(icon);
 			stage.setTitle("Add...");
-			stage.setMinWidth(600);
-			stage.setMinHeight(500);
+			stage.setMinWidth(1024);
+			stage.setMinHeight(736);
 
 			stage.show();
 
