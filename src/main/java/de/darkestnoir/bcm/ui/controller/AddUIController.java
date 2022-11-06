@@ -83,20 +83,60 @@ public class AddUIController implements Initializable {
 		return t;
 	});
 
-	double cellset = 0.0;
+	@FXML
+	private TextField addCategorySearch;
 
-	ObservableList<ListString> list = FXCollections.observableArrayList();
+	@FXML
+	private ListView<ListString> addColorList;
 
-	private Color[] legoColors;
+	@FXML
+	private TextField addColorSearch;
 
 	@FXML
 	private RadioButton addPart;
 
 	@FXML
-	private RadioButton addSet;
+	private ListView<ListString> addPartCategoryList;
+
+	@FXML
+	private TableColumn<PartTableElementModel, String> addPartColumnANumber;
+
+	@FXML
+	private TableColumn<PartTableElementModel, String> addPartColumnBrand;
+
+	@FXML
+	private TableColumn<PartTableElementModel, String> addPartColumnCategory;
+
+	@FXML
+	private TableColumn<PartTableElementModel, String> addPartColumnImage;
+
+	@FXML
+	private TableColumn<PartTableElementModel, String> addPartColumnName;
+
+	@FXML
+	private TableColumn<PartTableElementModel, String> addPartColumnNumber;
 
 	@FXML
 	private TextField addPartSearch;
+
+	@FXML
+	private TableView<PartTableElementModel> addPartTable;
+
+	@FXML
+	private RadioButton addSet;
+
+	double cellset = 0.0;
+
+	@FXML
+	private VBox colorVBox;
+
+	private Task<Image> dataLoadTask;
+
+	private final ImageCache imageCache = ImageCache.getInstance();
+
+	private Color[] legoColors;
+
+	ObservableList<ListString> list = FXCollections.observableArrayList();
 
 	@FXML
 	private HBox mainHBox;
@@ -105,52 +145,16 @@ public class AddUIController implements Initializable {
 	private VBox partCategoryVBox;
 
 	@FXML
-	private VBox themesVBox;
-
-	@FXML
 	private VBox partTableVBox;
-
-	@FXML
-	private VBox colorVBox;
-
-	@FXML
-	private TextField addCategorySearch;
-
-	@FXML
-	private ListView<ListString> addPartCategoryList;
-
-	@FXML
-	private TextField themesSearch;
 
 	@FXML
 	private ListView<ListString> themesList;
 
 	@FXML
-	private TableView<PartTableElementModel> addPartTable;
+	private TextField themesSearch;
 
 	@FXML
-	private TableColumn<PartTableElementModel, String> addPartColumnImage;
-
-	@FXML
-	private TableColumn<PartTableElementModel, String> addPartColumnBrand;
-
-	@FXML
-	private TableColumn<PartTableElementModel, String> addPartColumnNumber;
-
-	@FXML
-	private TableColumn<PartTableElementModel, String> addPartColumnANumber;
-
-	@FXML
-	private TableColumn<PartTableElementModel, String> addPartColumnName;
-
-	@FXML
-	private TableColumn<PartTableElementModel, String> addPartColumnCategory;
-
-	@FXML
-	private TextField addColorSearch;
-
-	@FXML
-	private ListView<ListString> addColorList;
+	private VBox themesVBox;
 
 	@FXML
 	public void addCategorySearchActive(ActionEvent event) {
@@ -274,7 +278,7 @@ public class AddUIController implements Initializable {
 		addPartColumnImage.setCellValueFactory(new PropertyValueFactory<>("partImage"));
 
 		addPartColumnImage.setCellFactory(tc -> {
-			return new TableCell<PartTableElementModel, String>() {
+			return new TableCell<>() {
 				private final ImageView imageView = new ImageView();
 				private final ImageCache imageCache = ImageCache.getInstance();
 				private Task<Image> dataLoadTask;

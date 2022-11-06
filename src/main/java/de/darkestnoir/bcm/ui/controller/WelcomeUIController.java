@@ -25,36 +25,35 @@ import javafx.stage.Stage;
 
 public class WelcomeUIController {
 
-	private String databaseSaveFolderDefault2 = ((System.getenv("USERPROFILE")) + ("\\Documents\\"));
-	private String databaseSaveFolderDefault1 = databaseSaveFolderDefault2 + ("BCM\\");
-	private String databaseSaveLocationDefault = databaseSaveFolderDefault1 + ("database.db");
-
 	@FXML
-	private Stage uiStage;
-
+	private Label apiKeyInvalidLabel;
 	@FXML
 	private Label databaseInvalidLabel;
-
-	@FXML
-	private Button welcomeQuitButton;
+	private String databaseSaveFolderDefault = ((System.getenv("USERPROFILE")) + ("\\Documents\\"));
+	private String databaseSaveFolderDefault1 = databaseSaveFolderDefault + ("BCM\\");
 
 	@FXML
 	private Button databaseSaveLocationButton;
+
+	private String databaseSaveLocationDefault = databaseSaveFolderDefault1 + ("database.db");
 
 	@FXML
 	private TextField databaseSaveLocationTextField;
 
 	@FXML
-	private Button welcomeOKButton;
-
-	@FXML
 	private TextField rebrickableApiKeyTextField;
 
 	@FXML
-	private Label apiKeyInvalidLabel;
+	private AnchorPane sceneAnchorPane;
 
 	@FXML
-	private AnchorPane sceneAnchorPane;
+	private Stage uiStage;
+
+	@FXML
+	private Button welcomeOKButton;
+
+	@FXML
+	private Button welcomeQuitButton;
 
 	/**
 	 * @param databaseSaveLocationText
@@ -105,7 +104,7 @@ public class WelcomeUIController {
 		if (databaseFolder.exists() && databaseFolder.isDirectory()) {
 			databaseLocationChooser.setInitialDirectory(new File(databaseSaveFolderDefault1));
 		} else {
-			databaseLocationChooser.setInitialDirectory(new File(databaseSaveFolderDefault2));
+			databaseLocationChooser.setInitialDirectory(new File(databaseSaveFolderDefault));
 		}
 		databaseLocationChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Database Files", "*.db"));
 		databaseLocationChooser.setInitialFileName("database.db");

@@ -3,12 +3,12 @@ package de.darkestnoir.bcm;
 import javafx.beans.property.SimpleStringProperty;
 
 public class PartTableElementModel {
-	private final SimpleStringProperty partImage;
-	private final SimpleStringProperty partBrand;
-	private final SimpleStringProperty partNumber;
 	private final SimpleStringProperty partANumber;
-	private final SimpleStringProperty partName;
+	private final SimpleStringProperty partBrand;
 	private final SimpleStringProperty partCategory;
+	private final SimpleStringProperty partImage;
+	private final SimpleStringProperty partName;
+	private final SimpleStringProperty partNumber;
 
 	public PartTableElementModel(String partImage, String partBrand, String partNumber, String partANumber, String partName, String partCategory) {
 		this.partImage = new SimpleStringProperty(partImage);
@@ -19,28 +19,28 @@ public class PartTableElementModel {
 		this.partCategory = new SimpleStringProperty(partCategory);
 	}
 
-	public String getPartImage() {
-		return partImage.get();
+	public String getPartANumber() {
+		return partANumber.get();
 	}
 
 	public String getPartBrand() {
 		return partBrand.get();
 	}
 
-	public String getPartNumber() {
-		return partNumber.get();
+	public String getPartCategory() {
+		return partCategory.get();
 	}
 
-	public String getPartANumber() {
-		return partANumber.get();
+	public String getPartImage() {
+		return partImage.get();
 	}
 
 	public String getPartName() {
 		return partName.get();
 	}
 
-	public String getPartCategory() {
-		return partCategory.get();
+	public String getPartNumber() {
+		return partNumber.get();
 	}
 
 }

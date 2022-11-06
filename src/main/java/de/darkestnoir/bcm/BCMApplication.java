@@ -16,10 +16,10 @@ import javafx.stage.WindowEvent;
 
 public class BCMApplication extends Application {
 
-	private static Stage uiStage;
-	private static boolean settingsLoaded = false;
 	private static Database database;
 	private static Settings settings;
+	private static boolean settingsLoaded = false;
+	private static Stage uiStage;
 
 	public static Database getDatabase() {
 		return database;

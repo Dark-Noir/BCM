@@ -34,50 +34,13 @@ public class MainUIController {
 	private AnchorPane sceneAnchorPane;
 
 	@FXML
-	public void mainAddClick(ActionEvent event) {
-		FXMLLoader fxmlLoader = new FXMLLoader(BCMApplication.class.getClassLoader().getResource("addUI.fxml"));
-		Parent parent;
-		try {
-			parent = fxmlLoader.load();
-
-			Scene scene = new Scene(parent, 1024, 736);
-			Stage stage = new Stage();
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setScene(scene);
-			Image icon = new Image("icons/app.png");
-			stage.getIcons().add(icon);
-			stage.setTitle("Add...");
-			stage.setMinWidth(1024);
-			stage.setMinHeight(736);
-
-			stage.show();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@FXML
-	public void open(ActionEvent event) {
-	}
-
-	@FXML
-	public void quit(ActionEvent event) {
-		BCMApplication.showClosePopup(null);
-	}
-
-	@FXML
-	public void save(ActionEvent event) {
-	}
-
-	@FXML
 	public void initialize() {
 		IRebrickableService service = new RebrickableServiceImpl(BCMApplication.getSettings().getApiKey());
 
 		LocalDateTime lastApiSyncTime = BCMApplication.getDatabase().getApiDate();
 		LocalDateTime currentLocalDate = LocalDateTime.now();
 
-		if (lastApiSyncTime == null || currentLocalDate.isAfter(lastApiSyncTime.plusDays(1))) {
+		if (lastApiSyncTime == null || currentLocalDate.isAfter(lastApiSyncTime.plusDays(10))) {
 			try {
 				Color[] color = service.getColors().getAllColors();
 
@@ -151,6 +114,43 @@ public class MainUIController {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@FXML
+	public void mainAddClick(ActionEvent event) {
+		FXMLLoader fxmlLoader = new FXMLLoader(BCMApplication.class.getClassLoader().getResource("addUI.fxml"));
+		Parent parent;
+		try {
+			parent = fxmlLoader.load();
+
+			Scene scene = new Scene(parent, 1024, 736);
+			Stage stage = new Stage();
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setScene(scene);
+			Image icon = new Image("icons/app.png");
+			stage.getIcons().add(icon);
+			stage.setTitle("Add...");
+			stage.setMinWidth(1024);
+			stage.setMinHeight(736);
+
+			stage.show();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	public void open(ActionEvent event) {
+	}
+
+	@FXML
+	public void quit(ActionEvent event) {
+		BCMApplication.showClosePopup(null);
+	}
+
+	@FXML
+	public void save(ActionEvent event) {
 	}
 
 }

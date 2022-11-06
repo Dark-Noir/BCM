@@ -12,15 +12,22 @@ public class Database implements Serializable {
 
 	private static final long serialVersionUID = -8120203326101679986L;
 
+	private LocalDateTime apiDate;
+
 	private Color[] legoColors;
+
+	private Part[] legoParts;
 
 	private PartCategories[] partCategories;
 
 	private Themes[] themes;
 
-	private Part[] legoParts;
-
-	private LocalDateTime apiDate;
+	/**
+	 * @return the legoParts
+	 */
+	public Part[] getAllParts() {
+		return legoParts;
+	}
 
 	/**
 	 * @return the apiDate
@@ -51,13 +58,6 @@ public class Database implements Serializable {
 	}
 
 	/**
-	 * @return the legoParts
-	 */
-	public Part[] getAllParts() {
-		return legoParts;
-	}
-
-	/**
 	 * @param apiDate the apiDate to set
 	 */
 	public void setApiDate(LocalDateTime apiDate) {
@@ -71,19 +71,19 @@ public class Database implements Serializable {
 		this.legoColors = legoColors;
 	}
 
+	/**
+	 * @param legoParts the legoParts to set
+	 */
+	public void setLegoParts(Part[] legoParts) {
+		this.legoParts = legoParts;
+	}
+
 	public void setPartCategories(PartCategories[] partCategories) {
 		this.partCategories = partCategories;
 	}
 
 	public void setThemes(Themes[] themes) {
 		this.themes = themes;
-	}
-
-	/**
-	 * @param legoParts the legoParts to set
-	 */
-	public void setLegoParts(Part[] legoParts) {
-		this.legoParts = legoParts;
 	}
 
 }

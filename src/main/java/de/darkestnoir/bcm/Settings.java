@@ -5,8 +5,8 @@ import java.io.Serializable;
 public class Settings implements Serializable {
 
 	private static final long serialVersionUID = 998183696897065480L;
-	private String databasePath;
 	private String apiKey;
+	private String databasePath;
 
 	public Settings() {
 	}
