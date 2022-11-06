@@ -26,8 +26,6 @@ import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -46,7 +44,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -347,84 +344,10 @@ public class AddUIController implements Initializable {
 							alertImageView.setFitHeight(500);
 							handleImageLoading(url, alertImageView, null);
 
-							BorderPane root2 = new BorderPane();
-
-							Label imageLabel = new Label("test");
-							imageLabel.setTextAlignment(TextAlignment.CENTER);
-
-							Button leftButton = new Button("<");
-							leftButton.setOnMouseClicked(event2 -> {
-								int currentIndex = index;
-								currentIndex -= 1;
-
-								if (currentIndex == -1) {
-									currentIndex = BCMApplication.getDatabase().getAllParts().length - 1;
-								}
-
-								while (true) {
-									String newPartUrl = BCMApplication.getDatabase().getAllParts()[currentIndex].getPartImgUrl();
-									if (newPartUrl != null) {
-										break;
-									}
-									currentIndex -= 1;
-									if (currentIndex == -1) {
-										currentIndex = BCMApplication.getDatabase().getAllParts().length - 1;
-									}
-								}
-
-								index = currentIndex;
-
-								Part a = BCMApplication.getDatabase().getAllParts()[currentIndex];
-								setItem(a.getPartImgUrl());
-
-								handleImageLoading(getItem(), alertImageView, null);
-
-								addPartTable.getSelectionModel().select(index);
-								addPartTable.scrollTo(index);
-								alertImageView.requestFocus();
-							});
-
-							Button rightButton = new Button(">");
-							rightButton.setOnMouseClicked(event2 -> {
-								int currentIndex = index;
-								currentIndex += 1;
-
-								if (currentIndex == BCMApplication.getDatabase().getAllParts().length) {
-									currentIndex = 0;
-								}
-
-								while (true) {
-									String newPartUrl = BCMApplication.getDatabase().getAllParts()[currentIndex].getPartImgUrl();
-									if (newPartUrl != null) {
-										break;
-									}
-									currentIndex += 1;
-									if (currentIndex == BCMApplication.getDatabase().getAllParts().length) {
-										currentIndex = 0;
-									}
-								}
-
-								index = currentIndex;
-
-								Part a = BCMApplication.getDatabase().getAllParts()[currentIndex];
-								setItem(a.getPartImgUrl());
-
-								handleImageLoading(getItem(), alertImageView, null);
-
-								addPartTable.getSelectionModel().select(index);
-								addPartTable.scrollTo(index);
-								alertImageView.requestFocus();
-							});
-
 							root.setCenter(alertImageView);
-							root.setBottom(root2);
-							root2.setCenter(imageLabel);
-							root2.setLeft(leftButton);
-							root2.setRight(rightButton);
-							root2.setPrefHeight(25);
 							root.layout();
 
-							Scene errorScene = new Scene(root, 500, 500 + root2.getHeight());
+							Scene errorScene = new Scene(root, 500, 500);
 							Stage errorStage = new Stage();
 
 							root.setOnMouseClicked(evt -> errorStage.close());
