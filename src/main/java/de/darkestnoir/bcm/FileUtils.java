@@ -8,6 +8,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FileUtils {
 	private static String settingsPath = System.getenv("APPDATA") + File.separator + "BCM" + File.separator;
@@ -25,6 +27,14 @@ public class FileUtils {
 		return database;
 	}
 
+	public static Map<String, String> loadImageCacheFromFile(String imageCachePath) throws IOException, ClassNotFoundException {
+		FileInputStream fileInputStream = new FileInputStream(imageCachePath);
+		ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+		HashMap<String, String> settings = (HashMap<String, String>) objectInputStream.readObject();
+		objectInputStream.close();
+		return settings;
+	}
+
 	public static Settings loadSettingsFromFile(String fileName) throws IOException, ClassNotFoundException {
 		FileInputStream fileInputStream = new FileInputStream(settingsPath + fileName);
 		ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
@@ -40,6 +50,14 @@ public class FileUtils {
 
 		FileOutputStream fileOutputStream = new FileOutputStream(databasePath);
 		writeObject(database, fileOutputStream);
+	}
+
+	public static void saveImageCacheToFile(Map<String, String> base64ImageCache, String imageCachePath) throws IOException {
+
+		// Files.createDirectories(Paths.get(imageCachePath));
+
+		FileOutputStream fileOutputStream = new FileOutputStream(imageCachePath);
+		writeObject(base64ImageCache, fileOutputStream);
 	}
 
 	public static void saveSettingsToFile(Settings settings, String fileName) throws IOException {

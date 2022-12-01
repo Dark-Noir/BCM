@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import org.dajlab.rebrickableapi.v3.service.IRebrickableService;
@@ -18,7 +19,9 @@ import org.dajlab.rebrickableapi.v3.vo.Themes;
 
 import de.darkestnoir.bcm.BCMApplication;
 import de.darkestnoir.bcm.FileUtils;
+import de.darkestnoir.bcm.ImageCache;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -27,11 +30,14 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class MainUIController {
 
 	@FXML
 	private AnchorPane sceneAnchorPane;
+
+	String dbPath;
 
 	@FXML
 	public void initialize() {
@@ -133,7 +139,30 @@ public class MainUIController {
 			stage.setMinWidth(1024);
 			stage.setMinHeight(736);
 
+			try {
+				dbPath = BCMApplication.getSettings().getDatabasePath();
+				dbPath = dbPath.substring(0, dbPath.lastIndexOf("\\") + 1) + "imageCache.db";
+
+				HashMap<String, String> imageBase64Cache = (HashMap<String, String>) FileUtils.loadImageCacheFromFile(dbPath);
+				ImageCache.getInstance().getBase64ImageCache().putAll(imageBase64Cache);
+			} catch (IOException | ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+
 			stage.show();
+
+			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+
+				@Override
+				public void handle(WindowEvent event) {
+					try {
+						FileUtils.saveImageCacheToFile(ImageCache.getInstance().getBase64ImageCache(), dbPath);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
 
 		} catch (IOException e) {
 			e.printStackTrace();
