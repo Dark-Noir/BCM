@@ -1,5 +1,6 @@
 package de.darkestnoir.bcm.ui.controller;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -201,9 +202,11 @@ public class MainUIController {
 
 				HashMap<String, String> imageBase64Cache = (HashMap<String, String>) FileUtils.loadImageCacheFromFile(dbPath);
 				ImageCache.getInstance().getBase64ImageCache().putAll(imageBase64Cache);
-			} catch (IOException | ClassNotFoundException e) {
+			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
-			}
+			} catch (FileNotFoundException e){
+                System.err.println("Image cache file not found, starting with an empty cache.");
+            }
 
 			stage.show();
 
