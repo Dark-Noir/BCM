@@ -1,7 +1,9 @@
 package de.darkestnoir.bcm.ui.controller;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -320,99 +322,126 @@ public class AddUIController implements Initializable {
 
 		addPartColumnImage.setCellValueFactory(new PropertyValueFactory<>("partImage"));
 
-		addPartColumnImage.setCellFactory(tc -> {
-			return new TableCell<>() {
-				private final ImageView imageView = new ImageView();
-				private final ImageCache imageCache = ImageCache.getInstance();
-				private Task<Image> dataLoadTask;
+        addPartColumnImage.setCellFactory(tc -> new TableCell<>() {
 
-				private int index;
+            private final ImageView imageView = new ImageView();
+            private final ImageCache imageCache = ImageCache.getInstance();
 
-				private void handleImageLoading(String url, ImageView imageView, Labeled node) {
-					if (url != null && !url.trim().isEmpty()) {
-						try {
-							loadImage(url, imageView, node);
-						} catch (Exception e) {
-							loadImage("icons/image_not_supported.png", imageView, node);
-						}
-					} else {
-						loadImage("icons/image_not_supported.png", imageView, node);
-					}
-				}
+            // State per cell
+            private String currentUrl;
+            private ChangeListener<Number> progressListener;
+            private ChangeListener<Boolean> errorListener;
 
-				private void loadImage(String url, ImageView imageView, Labeled node) {
-					if (dataLoadTask != null) {
-						dataLoadTask.cancel();
-					}
+            {
+                imageView.setPreserveRatio(true);
+                imageView.setFitWidth(48);
 
-					dataLoadTask = new Task<Image>() {
-						@Override
-						public Image call() {
-							return imageCache.get(url);
-						}
-					};
+                // Maus-Handler einmalig
+                setOnMouseEntered(e -> {
+                    if (isImageViewInteractable(imageView)) setCursor(Cursor.HAND);
+                });
+                setOnMouseExited(e -> setCursor(Cursor.DEFAULT));
+                setOnMouseClicked(e -> {
+                    if (!isImageViewInteractable(imageView)) return;
 
-					dataLoadTask.setOnSucceeded(e -> {
-						imageView.setImage(dataLoadTask.getValue());
-						if (node != null) {
-							node.setGraphic(imageView);
-						}
-					});
+                    final String url = getItem(); // aktuelle URL der Zelle
+                    if (url == null || url.isBlank()) return;
 
-					exec.execute(dataLoadTask);
-				}
+                    BorderPane root = new BorderPane();
+                    ImageView alertImageView = new ImageView();
+                    alertImageView.setPreserveRatio(true);
+                    alertImageView.setFitWidth(500);
+                    alertImageView.setFitHeight(500);
 
-				@Override
-				protected void updateItem(String url, boolean empty) {
-					super.updateItem(url, empty);
+                    // großes Bild mit gleichem Loader laden
+                    loadIntoImageView(url, alertImageView, /*useCache*/ true);
 
-					imageView.setPreserveRatio(true);
-					imageView.setFitWidth(48);
+                    root.setCenter(alertImageView);
+                    Scene scene = new Scene(root, 500, 500);
+                    Stage stage = new Stage();
+                    root.setOnMouseClicked(evt -> stage.close());
+                    stage.setScene(scene);
+                    stage.initStyle(StageStyle.UNDECORATED);
+                    stage.initModality(Modality.APPLICATION_MODAL);
+                    stage.initOwner(BCMApplication.getUiStage());
+                    stage.show();
+                    alertImageView.requestFocus();
+                });
+            }
 
-					setOnMouseEntered(event -> {
-						if (isImageViewInteractable(imageView)) {
-							setCursor(Cursor.HAND);
-						}
-					});
+            @Override
+            protected void updateItem(String url, boolean empty) {
+                super.updateItem(url, empty);
 
-					setOnMouseExited(event -> setCursor(Cursor.DEFAULT));
+                if (empty || url == null || url.isBlank()) {
+                    detachListeners();           // wichtig bei Cell-Reuse
+                    currentUrl = null;
+                    imageView.setImage(null);
+                    setGraphic(null);
+                    return;
+                }
 
-					setOnMouseClicked(event -> {
-						if (isImageViewInteractable(imageView)) {
-							index = getIndex();
+                // Nur wenn sich die URL ändert, neu laden
+                if (!url.equals(currentUrl)) {
+                    currentUrl = url;
+                    detachListeners();
+                    imageView.setImage(null);    // optional: Placeholder-Bild setzen
+                    setGraphic(imageView);       // Graphic deterministisch setzen
+                    loadIntoImageView(url, imageView, /*useCache*/ true);
+                } else {
+                    // Sicherstellen, dass die Graphic gesetzt ist (bei Reuse)
+                    setGraphic(imageView);
+                }
+            }
 
-							BorderPane root = new BorderPane();
+            private void loadIntoImageView(String url, ImageView target, boolean useCache) {
+                // 1) Versuche synchron aus dem Cache zu bekommen
+                Image img = useCache ? imageCache.get(url) : null;
 
-							final ImageView alertImageView = new ImageView();
+                if (img == null) {
+                    // 2) Fallback: echtes Background-Loading, unabhängig vom Cache
+                    img = new Image(url, /*backgroundLoading*/ true);
+                }
 
-							alertImageView.setPreserveRatio(true);
-							alertImageView.setFitWidth(500);
-							alertImageView.setFitHeight(500);
-							handleImageLoading(url, alertImageView, null);
+                // Bild sofort setzen – wenn noch nicht fertig, rendert es, sobald geladen
+                target.setImage(img);
 
-							root.setCenter(alertImageView);
-							root.layout();
+                // 3) Für den Tabellen-Cell-Fall an Ladeende hängen + Fehler behandeln
+                if (target == imageView) {
+                    // Listener pro Cell halten, damit wir sie bei Reuse lösen können
+                    progressListener = (obs, oldV, newV) -> {
+                        if (Objects.equals(url, currentUrl) && newV.doubleValue() >= 1.0) {
+                            // Laden fertig; nichts weiter nötig, ImageView aktualisiert sich selbst
+                            detachListeners();
+                        }
+                    };
+                    errorListener = (obs, oldV, newV) -> {
+                        if (Boolean.TRUE.equals(newV) && Objects.equals(url, currentUrl)) {
+                            target.setImage(new Image("icons/image_not_supported.png"));
+                            detachListeners();
+                        }
+                    };
 
-							Scene errorScene = new Scene(root, 500, 500);
-							Stage errorStage = new Stage();
+                    img.progressProperty().addListener(progressListener);
+                    img.errorProperty().addListener(errorListener);
+                }
+            }
 
-							root.setOnMouseClicked(evt -> errorStage.close());
+            private void detachListeners() {
+                Image current = imageView.getImage();
+                if (current != null && progressListener != null) {
+                    current.progressProperty().removeListener(progressListener);
+                }
+                if (current != null && errorListener != null) {
+                    current.errorProperty().removeListener(errorListener);
+                }
+                progressListener = null;
+                errorListener = null;
+            }
+        });
 
-							errorStage.setScene(errorScene);
-							errorStage.initStyle(StageStyle.UNDECORATED);
-							errorStage.initModality(Modality.APPLICATION_MODAL);
-							errorStage.initOwner(BCMApplication.getUiStage());
-							errorStage.show();
-							alertImageView.requestFocus();
-						}
-					});
 
-					handleImageLoading(url, imageView, this);
-				}
-			};
-		});
-
-		addPartColumnBrand.setCellValueFactory(new PropertyValueFactory<>("partBrand"));
+        addPartColumnBrand.setCellValueFactory(new PropertyValueFactory<>("partBrand"));
 		addPartColumnNumber.setCellValueFactory(new PropertyValueFactory<>("partNumber"));
 		addPartColumnANumber.setCellValueFactory(new PropertyValueFactory<>("partANumber"));
 		addPartColumnName.setCellValueFactory(new PropertyValueFactory<>("partName"));
@@ -540,7 +569,7 @@ public class AddUIController implements Initializable {
 		}
 		return "Unknown";
 	}
-	
+
 	private void updateMainImage(String imageUrl) {
 		if (imageUrl != null && !imageUrl.trim().isEmpty()) {
 			try {
@@ -603,12 +632,6 @@ public class AddUIController implements Initializable {
 				);
 				partTablelist.add(partTableElementModel);
 			}
-		}
-
-		// Add some empty rows for better UX (keeping the original behavior)
-		for (int i = 0; i < 100; i++) {
-			PartTableElementModel partTableElementModel = new PartTableElementModel("", "Lego", "", "ANumber", "", "");
-			partTablelist.add(partTableElementModel);
 		}
 
 		System.out.println("Filtered parts: " + (filteredParts != null ? filteredParts.length : 0));
