@@ -27,6 +27,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Labeled;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
@@ -133,6 +134,8 @@ public class AddUIController implements Initializable {
 
 	private Color[] legoColors;
 
+	private Part[] parts;
+
 	ObservableList<ListString> list = FXCollections.observableArrayList();
 
 	@FXML
@@ -152,6 +155,24 @@ public class AddUIController implements Initializable {
 
 	@FXML
 	private VBox themesVBox;
+
+	@FXML
+	private Label detailBrandLabel;
+
+	@FXML
+	private Label detailPartNumberLabel;
+
+	@FXML
+	private Label detailAltPartNumberLabel;
+
+	@FXML
+	private Label detailNameLabel;
+
+	@FXML
+	private Label detailCategoryLabel;
+
+	@FXML
+	private ImageView mainPartImageView;
 
 	@FXML
 	public void addCategorySearchActive(ActionEvent event) {
@@ -236,7 +257,7 @@ public class AddUIController implements Initializable {
 	}
 
 	private boolean isImageViewInteractable(ImageView imageView) {
-		return imageView.getImage() != null && imageView.getImage().getUrl().contains("http");
+		return imageView.getImage() != null && imageView.getImage().getUrl() != null && imageView.getImage().getUrl().contains("http");
 	}
 
 	private void loadColors(String filter) {
@@ -372,7 +393,7 @@ public class AddUIController implements Initializable {
 		addPartColumnName.setCellValueFactory(new PropertyValueFactory<>("partName"));
 		addPartColumnCategory.setCellValueFactory(new PropertyValueFactory<>("partCategory"));
 
-		Part[] parts = BCMApplication.getDatabase().getAllParts();
+		parts = BCMApplication.getDatabase().getAllParts();
 
 		ObservableList<PartTableElementModel> partTablelist = FXCollections.observableArrayList();
 		for (Part part : parts) {
@@ -390,6 +411,15 @@ public class AddUIController implements Initializable {
 
 		System.out.println(partTablelist.size());
 		addPartTable.setItems(partTablelist);
+		
+		// Add selection listener to update part details
+		addPartTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null) {
+				updatePartDetails(newValue);
+			} else {
+				clearPartDetails();
+			}
+		});
 	}
 
 	private void loadThemes(String filter) {
@@ -440,6 +470,105 @@ public class AddUIController implements Initializable {
 	public void themesSearchTyped(KeyEvent event) {
 		loadThemes(themesSearch.getText());
 
+	}
+	
+	private void updatePartDetails(PartTableElementModel selectedPart) {
+		if (selectedPart != null && selectedPart.getPartNumber() != null && !selectedPart.getPartNumber().isEmpty()) {
+			// Find the corresponding Part object
+			Part part = findPartByNumber(selectedPart.getPartNumber());
+			if (part != null) {
+				detailBrandLabel.setText("Lego");
+				detailPartNumberLabel.setText(part.getPartNum());
+				detailAltPartNumberLabel.setText("N/A"); // Alt part number not available in current model
+				detailNameLabel.setText(part.getName());
+				
+				// Get category name from ID
+				String categoryName = getCategoryNameById(part.getPartCatId());
+				detailCategoryLabel.setText(categoryName);
+				
+				// Update the main image
+				updateMainImage(part.getPartImgUrl());
+			} else {
+				clearPartDetails();
+			}
+		} else {
+			clearPartDetails();
+		}
+	}
+	
+	private void clearPartDetails() {
+		detailBrandLabel.setText("-");
+		detailPartNumberLabel.setText("-");
+		detailAltPartNumberLabel.setText("-");
+		detailNameLabel.setText("-");
+		detailCategoryLabel.setText("-");
+		
+		// Clear the main image
+		updateMainImage(null);
+	}
+	
+	private Part findPartByNumber(String partNumber) {
+		if (parts != null) {
+			for (Part part : parts) {
+				if (part.getPartNum().equals(partNumber)) {
+					return part;
+				}
+			}
+		}
+		return null;
+	}
+	
+	private String getCategoryNameById(int categoryId) {
+		PartCategory[] categories = BCMApplication.getDatabase().getPartCategories();
+		if (categories != null) {
+			for (PartCategory category : categories) {
+				if (category.getId() == categoryId) {
+					return category.getName();
+				}
+			}
+		}
+		return "Unknown";
+	}
+	
+	private void updateMainImage(String imageUrl) {
+		if (imageUrl != null && !imageUrl.trim().isEmpty()) {
+			try {
+				// Load the image using the existing image cache
+				Task<Image> imageTask = new Task<Image>() {
+					@Override
+					public Image call() {
+						return imageCache.get(imageUrl);
+					}
+				};
+				
+				imageTask.setOnSucceeded(e -> {
+					mainPartImageView.setImage(imageTask.getValue());
+				});
+				
+				imageTask.setOnFailed(e -> {
+					// Load default image if loading fails
+					loadDefaultImage();
+				});
+				
+				exec.execute(imageTask);
+			} catch (Exception e) {
+				// Load default image if there's an exception
+				loadDefaultImage();
+			}
+		} else {
+			// Load default image if no URL provided
+			loadDefaultImage();
+		}
+	}
+	
+	private void loadDefaultImage() {
+		try {
+			Image defaultImage = new Image(getClass().getResourceAsStream("/icons/app.png"));
+			mainPartImageView.setImage(defaultImage);
+		} catch (Exception e) {
+			// If even the default image fails, clear the image
+			mainPartImageView.setImage(null);
+		}
 	}
 
 }

@@ -76,7 +76,7 @@
                <left>
                   <BorderPane minHeight="350.0" minWidth="350.0" prefHeight="350.0" prefWidth="350.0" BorderPane.alignment="CENTER">
                      <center>
-                        <ImageView fitHeight="350.0" fitWidth="350.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                        <ImageView fx:id="mainPartImageView" fitHeight="350.0" fitWidth="350.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
                            <image>
                               <Image url="@icons/app.png" />
                            </image>
@@ -142,11 +142,11 @@
                               </VBox>
                               <VBox spacing="5.0">
                                  <children>
-                                    <Label prefHeight="25.0" text="Label" />
-                                    <Label prefHeight="25.0" text="Label" />
-                                    <Label prefHeight="25.0" text="Label" />
-                                    <Label prefHeight="25.0" text="Label" />
-                                    <Label prefHeight="25.0" text="Label" />
+                                    <Label fx:id="detailBrandLabel" prefHeight="25.0" text="-" />
+                                    <Label fx:id="detailPartNumberLabel" prefHeight="25.0" text="-" />
+                                    <Label fx:id="detailAltPartNumberLabel" prefHeight="25.0" text="-" />
+                                    <Label fx:id="detailNameLabel" prefHeight="25.0" text="-" />
+                                    <Label fx:id="detailCategoryLabel" prefHeight="25.0" text="-" />
                                  </children>
                               </VBox>
                            </children>
