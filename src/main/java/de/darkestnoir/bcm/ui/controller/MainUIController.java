@@ -89,7 +89,7 @@ public class MainUIController {
 					boolean hasMore = true;
 					
 					while (hasMore) {
-						var response = legoService.getPartCategories();
+						var response = legoService.getPartCategories(page);
 						if (response.getData() != null && response.getData().getResults() != null) {
 							allPartCategories.addAll(Arrays.asList(response.getData().getResults()));
 							hasMore = response.getData().hasNext();
@@ -116,7 +116,7 @@ public class MainUIController {
 					boolean hasMore = true;
 					
 					while (hasMore) {
-						var response = legoService.getThemes();
+						var response = legoService.getThemes(page);
 						if (response.getData() != null && response.getData().getResults() != null) {
 							allThemes.addAll(Arrays.asList(response.getData().getResults()));
 							hasMore = response.getData().hasNext();
@@ -143,7 +143,7 @@ public class MainUIController {
 					boolean hasMore = true;
 					
 					while (hasMore) {
-						var response = legoService.getParts();
+						var response = legoService.getParts(page);
 						if (response.getData() != null && response.getData().getResults() != null) {
 							allParts.addAll(Arrays.asList(response.getData().getResults()));
 							hasMore = response.getData().hasNext();
