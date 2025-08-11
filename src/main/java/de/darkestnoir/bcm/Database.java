@@ -3,10 +3,10 @@ package de.darkestnoir.bcm;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import org.dajlab.rebrickableapi.v3.vo.Color;
-import org.dajlab.rebrickableapi.v3.vo.Part;
-import org.dajlab.rebrickableapi.v3.vo.PartCategories;
-import org.dajlab.rebrickableapi.v3.vo.Themes;
+import de.dortmunddev.models.Color;
+import de.dortmunddev.models.Part;
+import de.dortmunddev.models.PartCategory;
+import de.dortmunddev.models.Theme;
 
 public class Database implements Serializable {
 
@@ -18,9 +18,9 @@ public class Database implements Serializable {
 
 	private Part[] legoParts;
 
-	private PartCategories[] partCategories;
+	private PartCategory[] partCategories;
 
-	private Themes[] themes;
+	private Theme[] themes;
 
 	/**
 	 * @return the legoParts
@@ -46,14 +46,14 @@ public class Database implements Serializable {
 	/**
 	 * @return the legoColors
 	 */
-	public PartCategories[] getPartCategories() {
+	public PartCategory[] getPartCategories() {
 		return partCategories;
 	}
 
 	/**
 	 * @return the themes
 	 */
-	public Themes[] getThemes() {
+	public Theme[] getThemes() {
 		return themes;
 	}
 
@@ -78,11 +78,11 @@ public class Database implements Serializable {
 		this.legoParts = legoParts;
 	}
 
-	public void setPartCategories(PartCategories[] partCategories) {
+	public void setPartCategories(PartCategory[] partCategories) {
 		this.partCategories = partCategories;
 	}
 
-	public void setThemes(Themes[] themes) {
+	public void setThemes(Theme[] themes) {
 		this.themes = themes;
 	}
 

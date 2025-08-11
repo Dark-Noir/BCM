@@ -9,13 +9,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import org.dajlab.rebrickableapi.v3.service.IRebrickableService;
-import org.dajlab.rebrickableapi.v3.service.RebrickableServiceImpl;
-import org.dajlab.rebrickableapi.v3.vo.Color;
-import org.dajlab.rebrickableapi.v3.vo.Part;
-import org.dajlab.rebrickableapi.v3.vo.PartCategories;
-import org.dajlab.rebrickableapi.v3.vo.RebrickableException;
-import org.dajlab.rebrickableapi.v3.vo.Themes;
+import de.dortmunddev.RebrickableApiClient;
+import de.dortmunddev.LegoService;
+import de.dortmunddev.ApiException;
+import de.dortmunddev.models.Color;
+import de.dortmunddev.models.Part;
+import de.dortmunddev.models.PartCategory;
+import de.dortmunddev.models.Theme;
 
 import de.darkestnoir.bcm.BCMApplication;
 import de.darkestnoir.bcm.FileUtils;
@@ -41,84 +41,140 @@ public class MainUIController {
 
 	@FXML
 	public void initialize() {
-		IRebrickableService service = new RebrickableServiceImpl(BCMApplication.getSettings().getApiKey());
+		try (RebrickableApiClient client = new RebrickableApiClient(BCMApplication.getSettings().getApiKey())) {
+			LegoService legoService = client.lego();
 
-		LocalDateTime lastApiSyncTime = BCMApplication.getDatabase().getApiDate();
-		LocalDateTime currentLocalDate = LocalDateTime.now();
+			LocalDateTime lastApiSyncTime = BCMApplication.getDatabase().getApiDate();
+			LocalDateTime currentLocalDate = LocalDateTime.now();
 
-		if (lastApiSyncTime == null || currentLocalDate.isAfter(lastApiSyncTime.plusDays(10))) {
-			try {
-				Color[] color = service.getColors().getAllColors();
-
-				List<Color> colorList = new ArrayList(Arrays.asList(color));
-
-				List<Color> elementsToRemove = new ArrayList<>();
-				for (Color currentColor : colorList) {
-					if (currentColor.getName().equals("[Unknown]")) {
-						elementsToRemove.add(currentColor);
+			if (lastApiSyncTime == null || currentLocalDate.isAfter(lastApiSyncTime.plusDays(10))) {
+				try {
+					// Get all colors (we'll need to handle pagination)
+					List<Color> allColors = new ArrayList<>();
+					int page = 1;
+					boolean hasMore = true;
+					
+					while (hasMore) {
+						var response = legoService.getColors(page);
+						if (response.getData() != null && response.getData().getResults() != null) {
+							allColors.addAll(Arrays.asList(response.getData().getResults()));
+							hasMore = response.getData().hasNext();
+							page++;
+						} else {
+							hasMore = false;
+						}
 					}
+
+					List<Color> elementsToRemove = new ArrayList<>();
+					for (Color currentColor : allColors) {
+						if (currentColor.getName().equals("[Unknown]")) {
+							elementsToRemove.add(currentColor);
+						}
+					}
+					allColors.removeAll(elementsToRemove);
+					Collections.sort(allColors, (c1, c2) -> c1.getName().compareTo(c2.getName()));
+
+					BCMApplication.getDatabase().setLegoColors(allColors.toArray(new Color[0]));
+
+					System.out.println("Loading colors done");
+				} catch (ApiException e) {
+					e.printStackTrace();
+					System.out.println("Loading colors failed");
 				}
-				colorList.removeAll(elementsToRemove);
-				Collections.sort(colorList);
 
-				BCMApplication.getDatabase().setLegoColors(colorList.toArray(new Color[colorList.size()]));
+				try {
+					// Get all part categories
+					List<PartCategory> allPartCategories = new ArrayList<>();
+					int page = 1;
+					boolean hasMore = true;
+					
+					while (hasMore) {
+						var response = legoService.getPartCategories();
+						if (response.getData() != null && response.getData().getResults() != null) {
+							allPartCategories.addAll(Arrays.asList(response.getData().getResults()));
+							hasMore = response.getData().hasNext();
+							page++;
+						} else {
+							hasMore = false;
+						}
+					}
 
-				System.out.println("Loading colors done");
-			} catch (RebrickableException e) {
-				e.printStackTrace();
-				System.out.println("Loading colors failed");
+					Collections.sort(allPartCategories, (c1, c2) -> c1.getName().compareTo(c2.getName()));
+
+					BCMApplication.getDatabase().setPartCategories(allPartCategories.toArray(new PartCategory[0]));
+
+					System.out.println("Loading part categories done");
+				} catch (ApiException e) {
+					e.printStackTrace();
+					System.out.println("Loading part categories failed");
+				}
+
+				try {
+					// Get all themes
+					List<Theme> allThemes = new ArrayList<>();
+					int page = 1;
+					boolean hasMore = true;
+					
+					while (hasMore) {
+						var response = legoService.getThemes();
+						if (response.getData() != null && response.getData().getResults() != null) {
+							allThemes.addAll(Arrays.asList(response.getData().getResults()));
+							hasMore = response.getData().hasNext();
+							page++;
+						} else {
+							hasMore = false;
+						}
+					}
+
+					Collections.sort(allThemes, (t1, t2) -> t1.getName().compareTo(t2.getName()));
+
+					BCMApplication.getDatabase().setThemes(allThemes.toArray(new Theme[0]));
+
+					System.out.println("Loading themes done");
+				} catch (ApiException e) {
+					e.printStackTrace();
+					System.out.println("Loading themes failed");
+				}
+
+				try {
+					// Get all parts (this might take a while due to large dataset)
+					List<Part> allParts = new ArrayList<>();
+					int page = 1;
+					boolean hasMore = true;
+					
+					while (hasMore) {
+						var response = legoService.getParts();
+						if (response.getData() != null && response.getData().getResults() != null) {
+							allParts.addAll(Arrays.asList(response.getData().getResults()));
+							hasMore = response.getData().hasNext();
+							page++;
+						} else {
+							hasMore = false;
+						}
+					}
+					
+					BCMApplication.getDatabase().setLegoParts(allParts.toArray(new Part[0]));
+
+					System.out.println("Loading parts done");
+				} catch (ApiException e) {
+					e.printStackTrace();
+					System.out.println("Loading parts failed");
+				}
+
+				BCMApplication.getDatabase().setApiDate(currentLocalDate);
+
+				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
+				System.out.println(dtf.format(currentLocalDate));
+
+				try {
+					FileUtils.saveDatabaseToFile(BCMApplication.getDatabase(), BCMApplication.getSettings().getDatabasePath());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-
-			try {
-				PartCategories[] partCategories = service.getPartCategories().getAllPartCategories();
-
-				List<PartCategories> partCategoriesList = new ArrayList(Arrays.asList(partCategories));
-
-				Collections.sort(partCategoriesList);
-
-				BCMApplication.getDatabase().setPartCategories(partCategoriesList.toArray(new PartCategories[partCategoriesList.size()]));
-
-				System.out.println("Loading part categories done");
-			} catch (RebrickableException e) {
-				e.printStackTrace();
-				System.out.println("Loading part categories failed");
-			}
-
-			try {
-				Themes[] themes = service.getThemes().getAllThemes();
-
-				List<Themes> themesList = new ArrayList(Arrays.asList(themes));
-
-				Collections.sort(themesList);
-
-				BCMApplication.getDatabase().setThemes(themesList.toArray(new Themes[themesList.size()]));
-
-				System.out.println("Loading themes done");
-			} catch (RebrickableException e) {
-				e.printStackTrace();
-				System.out.println("Loading themes failed");
-			}
-
-			try {
-				Part[] part = service.getParts().getAllParts();
-				BCMApplication.getDatabase().setLegoParts(part);
-
-				System.out.println("Loading parts done");
-			} catch (RebrickableException e) {
-				e.printStackTrace();
-				System.out.println("Loading parts failed");
-			}
-
-			BCMApplication.getDatabase().setApiDate(currentLocalDate);
-
-			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
-			System.out.println(dtf.format(currentLocalDate));
-
-			try {
-				FileUtils.saveDatabaseToFile(BCMApplication.getDatabase(), BCMApplication.getSettings().getDatabasePath());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("Failed to close API client");
 		}
 	}
 

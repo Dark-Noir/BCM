@@ -5,10 +5,10 @@ import java.util.ResourceBundle;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import org.dajlab.rebrickableapi.v3.vo.Color;
-import org.dajlab.rebrickableapi.v3.vo.Part;
-import org.dajlab.rebrickableapi.v3.vo.PartCategories;
-import org.dajlab.rebrickableapi.v3.vo.Themes;
+import de.dortmunddev.models.Color;
+import de.dortmunddev.models.Part;
+import de.dortmunddev.models.PartCategory;
+import de.dortmunddev.models.Theme;
 
 import de.darkestnoir.bcm.BCMApplication;
 import de.darkestnoir.bcm.ImageCache;
@@ -258,9 +258,9 @@ public class AddUIController implements Initializable {
 		list.clear();
 		addPartCategoryList.getItems().clear();
 
-		PartCategories[] partCategories = BCMApplication.getDatabase().getPartCategories();
+		PartCategory[] partCategories = BCMApplication.getDatabase().getPartCategories();
 
-		for (PartCategories partCategory : partCategories) {
+		for (PartCategory partCategory : partCategories) {
 			if (partCategory.getName().toLowerCase().contains(filter.toLowerCase())) {
 				list.add(new ListString(partCategory.getName()));
 			}
@@ -378,7 +378,7 @@ public class AddUIController implements Initializable {
 		for (Part part : parts) {
 
 			PartTableElementModel partTableElementModel = new PartTableElementModel(part.getPartImgUrl(), "Lego", part.getPartNum(), "ANumber", part.getName(),
-					part.getPartCatId());
+					String.valueOf(part.getPartCatId()));
 
 			partTablelist.add(partTableElementModel);
 		}
@@ -396,9 +396,9 @@ public class AddUIController implements Initializable {
 		list.clear();
 		themesList.getItems().clear();
 
-		Themes[] themes = BCMApplication.getDatabase().getThemes();
+		Theme[] themes = BCMApplication.getDatabase().getThemes();
 
-		for (Themes theme : themes) {
+		for (Theme theme : themes) {
 			if (theme.getName().toLowerCase().contains(filter.toLowerCase())) {
 				list.add(new ListString(theme.getName()));
 			}

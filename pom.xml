@@ -109,9 +109,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.dajlab</groupId>
+			<groupId>de.dortmunddev.rebrickableapi</groupId>
 			<artifactId>rebrickableapi</artifactId>
-			<version>0.0.7-SNAPSHOT</version>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
