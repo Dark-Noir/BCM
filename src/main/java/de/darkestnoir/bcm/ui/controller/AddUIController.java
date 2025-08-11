@@ -135,6 +135,7 @@ public class AddUIController implements Initializable {
 	private Color[] legoColors;
 
 	private Part[] parts;
+	private Part[] filteredParts;
 
 	ObservableList<ListString> list = FXCollections.observableArrayList();
 
@@ -174,6 +175,9 @@ public class AddUIController implements Initializable {
 	@FXML
 	private ImageView mainPartImageView;
 
+	private String selectedCategory = null;
+	private String selectedColor = null;
+
 	@FXML
 	public void addCategorySearchActive(ActionEvent event) {
 
@@ -208,7 +212,9 @@ public class AddUIController implements Initializable {
 
 	@FXML
 	public void addPartSearchTyped(KeyEvent event) {
-
+		// Implement part search functionality
+		String searchText = addPartSearch.getText().toLowerCase();
+		applyFiltersWithSearch(searchText);
 	}
 
 	@FXML
@@ -244,6 +250,25 @@ public class AddUIController implements Initializable {
 		addPartCategoryList.setCellFactory(this::cellFactory);
 		themesList.setCellFactory(this::cellFactory);
 		addColorList.setCellFactory(this::cellFactory);
+
+		// Add selection listeners for filtering
+		addPartCategoryList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null) {
+				selectedCategory = newValue.getListString();
+			} else {
+				selectedCategory = null;
+			}
+			applyFilters();
+		});
+
+		addColorList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null) {
+				selectedColor = newValue.getListString();
+			} else {
+				selectedColor = null;
+			}
+			applyFilters();
+		});
 
 		loadColors("");
 		loadPartCategories("");
@@ -394,23 +419,9 @@ public class AddUIController implements Initializable {
 		addPartColumnCategory.setCellValueFactory(new PropertyValueFactory<>("partCategory"));
 
 		parts = BCMApplication.getDatabase().getAllParts();
+		filteredParts = parts; // Initially show all parts
 
-		ObservableList<PartTableElementModel> partTablelist = FXCollections.observableArrayList();
-		for (Part part : parts) {
-
-			PartTableElementModel partTableElementModel = new PartTableElementModel(part.getPartImgUrl(), "Lego", part.getPartNum(), "ANumber", part.getName(),
-					String.valueOf(part.getPartCatId()));
-
-			partTablelist.add(partTableElementModel);
-		}
-
-		for (int i = 0; i < 100; i++) {
-			PartTableElementModel partTableElementModel = new PartTableElementModel("", "Lego", "", "ANumber", "", "");
-			partTablelist.add(partTableElementModel);
-		}
-
-		System.out.println(partTablelist.size());
-		addPartTable.setItems(partTablelist);
+		updatePartTable();
 		
 		// Add selection listener to update part details
 		addPartTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -508,8 +519,8 @@ public class AddUIController implements Initializable {
 	}
 	
 	private Part findPartByNumber(String partNumber) {
-		if (parts != null) {
-			for (Part part : parts) {
+		if (filteredParts != null) {
+			for (Part part : filteredParts) {
 				if (part.getPartNum().equals(partNumber)) {
 					return part;
 				}
@@ -569,6 +580,76 @@ public class AddUIController implements Initializable {
 			// If even the default image fails, clear the image
 			mainPartImageView.setImage(null);
 		}
+	}
+
+	private void applyFilters() {
+		// Apply filters with current search text
+		String searchText = addPartSearch.getText();
+		applyFiltersWithSearch(searchText);
+	}
+
+	private void updatePartTable() {
+		ObservableList<PartTableElementModel> partTablelist = FXCollections.observableArrayList();
+		
+		if (filteredParts != null) {
+			for (Part part : filteredParts) {
+				PartTableElementModel partTableElementModel = new PartTableElementModel(
+					part.getPartImgUrl(), 
+					"Lego", 
+					part.getPartNum(), 
+					"ANumber", 
+					part.getName(),
+					String.valueOf(part.getPartCatId())
+				);
+				partTablelist.add(partTableElementModel);
+			}
+		}
+
+		// Add some empty rows for better UX (keeping the original behavior)
+		for (int i = 0; i < 100; i++) {
+			PartTableElementModel partTableElementModel = new PartTableElementModel("", "Lego", "", "ANumber", "", "");
+			partTablelist.add(partTableElementModel);
+		}
+
+		System.out.println("Filtered parts: " + (filteredParts != null ? filteredParts.length : 0));
+		addPartTable.setItems(partTablelist);
+	}
+
+	private void applyFiltersWithSearch(String searchText) {
+		if (parts == null) return;
+
+		java.util.List<Part> filteredList = new java.util.ArrayList<>();
+
+		for (Part part : parts) {
+			boolean categoryMatch = true;
+			boolean colorMatch = true;
+			boolean searchMatch = true;
+
+			// Check category filter
+			if (selectedCategory != null) {
+				String categoryName = getCategoryNameById(part.getPartCatId());
+				categoryMatch = selectedCategory.equals(categoryName);
+			}
+
+			// Check color filter (for now, we'll skip color filtering as it requires part-color relationships)
+			if (selectedColor != null) {
+				// For now, we'll skip color filtering as we don't have part-color relationships
+				colorMatch = true; // Skip color filtering for now
+			}
+
+			// Check search filter
+			if (searchText != null && !searchText.trim().isEmpty()) {
+				searchMatch = part.getName().toLowerCase().contains(searchText) ||
+							part.getPartNum().toLowerCase().contains(searchText);
+			}
+
+			if (categoryMatch && colorMatch && searchMatch) {
+				filteredList.add(part);
+			}
+		}
+
+		filteredParts = filteredList.toArray(new Part[0]);
+		updatePartTable();
 	}
 
 }
